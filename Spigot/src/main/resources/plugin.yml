@@ -1,0 +1,10 @@
+main: io.github.evercraftmc.backuper.spigot.SpigotMain
+
+name: Backuper
+version: ${plugin_version}
+description: A custom plugin to backup all server data
+author: Kale Ko
+website: https://github.com/EverCraft-MC/Backuper
+
+api-version: "1.18"
+load: POSTWORLD

@@ -1,0 +1,14 @@
+plugins {
+    id 'java'
+}
+
+archivesBaseName = "shared"
+version = project.project_version
+
+dependencies {
+    compileOnly "com.google.code.gson:gson:${project.gson_version}"
+}
+
+tasks.register("buildFull") {
+    dependsOn tasks.build
+}

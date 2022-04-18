@@ -1,0 +1,7 @@
+main: io.github.evercraftmc.backuper.bungee.BungeeMain
+
+name: Backuper
+version: ${plugin_version}
+description: A custom plugin to backup all server data
+author: Kale Ko
+website: https://github.com/EverCraft-MC/Backuper
