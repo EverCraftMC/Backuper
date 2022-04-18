@@ -1,0 +1,102 @@
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.hierynomus:sshj:0.32.0"
+    }
+}
+
+plugins {
+    id 'java'
+}
+
+sourceCompatibility = JavaVersion.toVersion(project.java_version)
+targetCompatibility = JavaVersion.toVersion(project.java_version)
+
+archivesBaseName = "backuper"
+group = "io.github.evercraftmc"
+version = project.project_version
+
+repositories {
+    mavenCentral()
+}
+
+subprojects {
+    group = "io.github.evercraftmc.backuper"
+
+    configurations {
+        depencancy
+        depencancy.canBeResolved = true
+
+        compileOnly {
+            extendsFrom depencancy
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+}
+
+tasks.register("buildAll") {
+    dependsOn subprojects.collect { it.tasks.buildFull }
+
+    doLast {
+        fileTree(project.projectDir).visit(details -> {
+            if (details.file.path.startsWith("${project.projectDir}\\Backuper-")) {
+                def isCurrent = false
+
+                subprojects.each {
+                    if (it.tasks.buildFull.outputs.files.size() > 0 && it.tasks.buildFull.outputs.files[0].getPath() == details.file.path) {
+                        isCurrent = true
+                    }
+                }
+
+                if (!isCurrent) {
+                    delete(details.file.path)
+                }
+            }
+        })
+    }
+}
+
+import net.schmizz.sshj.SSHClient
+import net.schmizz.sshj.sftp.SFTPClient
+
+tasks.register("upload") {
+    dependsOn tasks.buildAll
+
+    doLast {
+        def servers = System.getenv("EVERCRAFT_SERVERS").split(";")
+
+        servers.each() {
+            def server = it
+
+            if (findProject(":" + server.split(":")[1]) != null) {
+                SSHClient ssh = new SSHClient()
+                ssh.loadKnownHosts()
+                ssh.connect(System.getenv("EVERCRAFT_FTP_HOST").split(":")[0], Integer.parseInt(System.getenv("EVERCRAFT_FTP_HOST").split(":")[1]))
+                ssh.authPassword(System.getenv("EVERCRAFT_FTP_USERNAME") + "." + server.split(":")[0], System.getenv("EVERCRAFT_FTP_PASSWORD"))
+
+                SFTPClient ftp = ssh.newSFTPClient()
+
+                ftp.ls(server.split(":")[2]).each() {
+                    if (it.getName().startsWith("Backuper-") && it.getName().endsWith(".jar") && it.isRegularFile()) {
+                        ftp.rm(it.getPath())
+                    }
+                }
+
+                ftp.put(project(":" + server.split(":")[1]).tasks.buildFull.outputs.files[0].getPath(), server.split(":")[2] + "/" + project(":" + server.split(":")[1]).tasks.buildFull.outputs.files[0].getName())
+
+                ftp.close()
+                ssh.disconnect()
+            }
+        }
+    }
+}

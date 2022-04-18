@@ -1,0 +1,6 @@
+rootProject.name = 'Backuper'
+
+include 'Shared'
+
+include 'Spigot'
+include 'Bungee'
