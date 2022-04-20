@@ -7,6 +7,7 @@ version = project.project_version
 
 dependencies {
     compileOnly "com.google.code.gson:gson:${project.gson_version}"
+    depencancy "org.apache.commons:commons-io:${project.apache_commons_io_version}"
 }
 
 tasks.register("buildFull") {

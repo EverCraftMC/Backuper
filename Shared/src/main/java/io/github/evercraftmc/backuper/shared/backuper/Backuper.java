@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 
 public class Backuper {
     private File source;
@@ -50,11 +51,11 @@ public class Backuper {
 
     private void backupDir(ZipOutputStream zipOut, File file, List<String> filters) {
         for (File cfile : file.listFiles()) {
-            String path = (cfile.getAbsolutePath().replace(this.source.getAbsolutePath(), ""));
+            String path = cfile.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace("\\", "/");
 
             Boolean matched = false;
-            for (String contition : filters) {
-                if ((cfile.isFile() && contition.split("\\\\")[contition.split("\\\\").length - 1].startsWith("*.") && cfile.getName().split("\\.").length > 0 && cfile.getName().split("\\.")[cfile.getName().split("\\.").length - 1].equalsIgnoreCase(contition.split("\\.")[contition.split("\\.").length - 1])) || path.toLowerCase().startsWith(contition.replace("/", "\\").toLowerCase())) {
+            for (String condition : filters) {
+                if (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("/", "\\").toLowerCase())) {
                     matched = true;
 
                     backupFile(zipOut, cfile);
