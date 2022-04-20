@@ -55,7 +55,7 @@ public class Backuper {
 
             Boolean matched = false;
             for (String condition : filters) {
-                if (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("/", "\\").toLowerCase())) {
+                if (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("\\", "/").toLowerCase())) {
                     matched = true;
 
                     backupFile(zipOut, cfile);
