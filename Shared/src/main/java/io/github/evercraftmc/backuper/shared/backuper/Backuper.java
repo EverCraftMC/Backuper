@@ -53,23 +53,32 @@ public class Backuper {
         for (File cfile : file.listFiles()) {
             String path = cfile.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace("\\", "/");
 
-            Boolean matched = false;
+            Boolean excluded = false;
             for (String condition : filters) {
-                if (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("\\", "/").toLowerCase())) {
-                    matched = true;
-
-                    backupFile(zipOut, cfile);
-
-                    if (cfile.isDirectory()) {
-                        backupDir(zipOut, cfile, filters);
-                    }
-
-                    break;
+                if (condition.startsWith("!") && (new WildcardFileFilter(condition.substring(1)).accept(cfile) || path.toLowerCase().startsWith(condition.substring(1).replace("\\", "/").toLowerCase()))) {
+                    excluded = true;
                 }
             }
 
-            if (!matched && cfile.isDirectory()) {
-                backupDir(zipOut, cfile, filters);
+            if (!excluded) {
+                Boolean matched = false;
+                for (String condition : filters) {
+                    if (!condition.startsWith("!") && (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("\\", "/").toLowerCase()))) {
+                        matched = true;
+
+                        backupFile(zipOut, cfile);
+
+                        if (cfile.isDirectory()) {
+                            backupDir(zipOut, cfile, filters);
+                        }
+
+                        break;
+                    }
+                }
+
+                if (!matched && cfile.isDirectory()) {
+                    backupDir(zipOut, cfile, filters);
+                }
             }
         }
     }
