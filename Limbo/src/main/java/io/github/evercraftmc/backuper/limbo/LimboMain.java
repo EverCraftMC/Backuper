@@ -40,7 +40,10 @@ public class LimboMain extends LimboPlugin implements Plugin {
         this.config = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
         this.config.reload();
 
-        this.config.addDefault("filter", Arrays.asList());
+        this.config.addDefault("destination", "/backups");
+        this.config.addDefault("limitType", Backuper.LimitType.AMOUNT);
+        this.config.addDefault("limit", 20);
+        this.config.addDefault("filter", Arrays.asList("/", "!/backups"));
 
         this.config.copyDefaults();
 
@@ -66,7 +69,7 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         System.out.println("Loading backuper..");
 
-        this.backuper = new Backuper(this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "backups");
+        this.backuper = new Backuper(config, this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getString("destination"));
 
         System.out.println("Finished loading backuper");
 
