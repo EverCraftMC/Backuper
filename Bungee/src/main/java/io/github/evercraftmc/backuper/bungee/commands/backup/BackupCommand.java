@@ -19,7 +19,7 @@ public class BackupCommand extends BungeeCommand {
 
         BungeeMain.getInstance().getProxy().getScheduler().runAsync(BungeeMain.getInstance(), new Runnable() {
             public void run() {
-                BungeeMain.getInstance().getBackuper().backup(BungeeMain.getInstance().getPluginConfig().getStringList("filter"));
+                BungeeMain.getInstance().getBackuper().backup();
 
                 sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getString("backup.backedUp"))));
             }

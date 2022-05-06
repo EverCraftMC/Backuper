@@ -19,7 +19,7 @@ public class BackupCommand extends SpigotCommand {
 
         SpigotMain.getInstance().getServer().getScheduler().runTaskAsynchronously(SpigotMain.getInstance(), new Runnable() {
             public void run() {
-                SpigotMain.getInstance().getBackuper().backup(SpigotMain.getInstance().getPluginConfig().getStringList("filter"));
+                SpigotMain.getInstance().getBackuper().backup();
 
                 sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getString("backup.backedUp"))));
             }

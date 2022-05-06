@@ -40,7 +40,10 @@ public class SpigotMain extends JavaPlugin implements Plugin {
         this.config = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
         this.config.reload();
 
-        this.config.addDefault("filter", Arrays.asList());
+        this.config.addDefault("destination", "/backups");
+        this.config.addDefault("limitType", Backuper.LimitType.AMOUNT);
+        this.config.addDefault("limit", 20);
+        this.config.addDefault("filter", Arrays.asList("/", "!/backups"));
 
         this.config.copyDefaults();
 
@@ -66,7 +69,7 @@ public class SpigotMain extends JavaPlugin implements Plugin {
 
         this.getLogger().info("Loading backuper..");
 
-        this.backuper = new Backuper(this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + File.separator + "backups");
+        this.backuper = new Backuper(config, this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getString("destination"));
 
         this.getLogger().info("Finished loading backuper");
 
