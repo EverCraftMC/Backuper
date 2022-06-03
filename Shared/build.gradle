@@ -10,6 +10,15 @@ dependencies {
     depencancy "org.apache.commons:commons-io:${project.apache_commons_io_version}"
 }
 
-tasks.register("buildFull") {
+tasks.register("buildFat", Jar) {
     dependsOn tasks.build
+
+    sourceCompatibility = JavaVersion.toVersion(project.java_version)
+    targetCompatibility = JavaVersion.toVersion(project.java_version)
+
+    duplicatesStrategy = "exclude"
+    classifier = "fat"
+
+    from files(project.sourceSets.main.output)
+    from files(project.configurations.depencancy.collect { it.isDirectory() ? it : zipTree(it) })
 }
