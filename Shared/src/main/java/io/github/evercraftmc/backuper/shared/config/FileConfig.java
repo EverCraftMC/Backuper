@@ -82,7 +82,13 @@ public class FileConfig extends AbstractConfig {
     }
 
     public Object getRaw(String key) {
-        return this.objects.get(key);
+        if (this.objects.containsKey(key)) {
+            return this.objects.get(key);
+        } else if (this.getDefaults().containsKey(key)) {
+            return this.getDefaults().get(key);
+        } else {
+            return null;
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -198,7 +204,7 @@ public class FileConfig extends AbstractConfig {
             }
             reader.close();
 
-            this.objects = gson.fromJson(contents.toString(), new TypeToken<Map<String, Object>>() { }.getType());
+            this.objects = gson.fromJson(contents.toString(), new TypeToken<Map<String, Object>>() {}.getType());
 
             for (Map.Entry<String, Object> entry : this.objects.entrySet()) {
                 if (entry.getValue() == null) {
@@ -222,5 +228,5 @@ public class FileConfig extends AbstractConfig {
         }
     }
 
-    public void close() { }
+    public void close() {}
 }
