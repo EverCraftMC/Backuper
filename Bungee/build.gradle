@@ -13,7 +13,7 @@ dependencies {
     depencancy project(':Shared')
     depencancy "org.apache.commons:commons-io:${project.apache_commons_io_version}"
 
-    compileOnly "io.github.waterfallmc:waterfall-api:${project.minecraft_release}-${project.waterfall_version}"
+    compileOnly "io.github.waterfallmc:waterfall-api:${project.waterfall_version}"
 }
 
 
