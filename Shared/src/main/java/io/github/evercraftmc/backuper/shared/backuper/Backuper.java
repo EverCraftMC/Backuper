@@ -43,7 +43,7 @@ public class Backuper {
 
     public void backup() {
         try {
-            FileOutputStream fos = new FileOutputStream(this.dest.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-Hh-mm-ss").withLocale(Locale.US).withZone(ZoneId.of("EST")).format(Instant.now()) + ".zip");
+            FileOutputStream fos = new FileOutputStream(this.dest.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-Hh-mm-ss").withLocale(Locale.US).withZone(ZoneId.of("-05:00")).format(Instant.now()) + ".zip");
             ZipOutputStream zipOut = new ZipOutputStream(fos);
 
             backupDir(zipOut, this.source);
