@@ -8,14 +8,16 @@ import io.github.evercraftmc.backuper.bungee.commands.BungeeCommand;
 import io.github.evercraftmc.backuper.bungee.commands.backup.BackupCommand;
 import io.github.evercraftmc.backuper.bungee.commands.backup.ReloadCommand;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
 import io.github.evercraftmc.backuper.shared.config.FileConfig;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper.shared.Plugin {
     private static BungeeMain Instance;
 
-    private FileConfig config;
-    private FileConfig messages;
+    private FileConfig<BackuperConfig> config;
+    private FileConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
@@ -36,39 +38,21 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
         this.getLogger().info("Loading config..");
 
-        this.config = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
+        this.config = new FileConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
         this.config.reload();
-
-        this.config.addDefault("destination", "/backups");
-        this.config.addDefault("limitType", Backuper.LimitType.AMOUNT);
-        this.config.addDefault("limit", 20);
-        this.config.addDefault("filter", Arrays.asList("/", "!/backups"));
-
-        this.config.copyDefaults();
 
         this.getLogger().info("Finished loading config");
 
         this.getLogger().info("Loading messages..");
 
-        this.messages = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "messages.json");
+        this.messages = new FileConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().getAbsolutePath() + File.separator + "messages.json");
         this.messages.reload();
-
-        this.messages.addDefault("error.noPerms", "&cYou need the permission {permission} to do that");
-        this.messages.addDefault("error.noConsole", "&cYou can't do that from the console");
-        this.messages.addDefault("error.playerNotFound", "&cCouldn't find player {player}");
-        this.messages.addDefault("error.invalidArgs", "&cInvalid arguments");
-        this.messages.addDefault("reload.reloading", "&aReloading plugin..");
-        this.messages.addDefault("reload.reloaded", "&aSuccessfully reloaded");
-        this.messages.addDefault("backup.backingUp", "&aBacking up data..");
-        this.messages.addDefault("backup.backedUp", "&aSuccessfully backed up all data");
-
-        this.messages.copyDefaults();
 
         this.getLogger().info("Finished loading messages");
 
         this.getLogger().info("Loading backuper..");
 
-        this.backuper = new Backuper(config, this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getString("destination"));
+        this.backuper = new Backuper(config, this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getParsed().destination);
 
         this.getLogger().info("Finished loading backuper");
 
@@ -126,11 +110,11 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
         return BungeeMain.Instance;
     }
 
-    public FileConfig getPluginConfig() {
+    public FileConfig<BackuperConfig> getPluginConfig() {
         return this.config;
     }
 
-    public FileConfig getPluginMessages() {
+    public FileConfig<BackuperMessages> getPluginMessages() {
         return this.messages;
     }
 

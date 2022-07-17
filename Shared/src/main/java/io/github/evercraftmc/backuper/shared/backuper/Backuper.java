@@ -14,19 +14,16 @@ import java.util.Locale;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
-import io.github.evercraftmc.backuper.shared.config.Config;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.LimitType;
+import io.github.evercraftmc.backuper.shared.config.FileConfig;
 
 public class Backuper {
-    public enum LimitType {
-        AMOUNT, SIZE
-    }
-
-    private Config config;
+    private FileConfig<BackuperConfig> config;
 
     private File source;
     private File dest;
 
-    public Backuper(Config config, String source, String dest) {
+    public Backuper(FileConfig<BackuperConfig> config, String source, String dest) {
         this.config = config;
 
         this.source = new File(source);
@@ -59,13 +56,13 @@ public class Backuper {
 
         Long x = 0l;
         for (Integer i = 0; i < backups.length; i++) {
-            if (LimitType.valueOf(config.getString("limitType")) == LimitType.AMOUNT) {
+            if (config.getParsed().limitType == LimitType.AMOUNT) {
                 x++;
-            } else if (LimitType.valueOf(config.getString("limitType")) == LimitType.SIZE) {
+            } else if (config.getParsed().limitType == LimitType.SIZE) {
                 x += backups[i].length();
             }
 
-            if (x > config.getInteger("limit")) {
+            if (x > config.getParsed().limit) {
                 try {
                     Files.delete(backups[i].toPath());
                 } catch (IOException e) {
@@ -80,7 +77,7 @@ public class Backuper {
             String path = cfile.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace("\\", "/");
 
             Boolean excluded = false;
-            for (String condition : this.config.getStringList("filter")) {
+            for (String condition : this.config.getParsed().filter) {
                 if (condition.startsWith("!") && (new WildcardFileFilter(condition.substring(1)).accept(cfile) || path.toLowerCase().startsWith(condition.substring(1).replace("\\", "/").toLowerCase()))) {
                     excluded = true;
                 }
@@ -88,7 +85,7 @@ public class Backuper {
 
             if (!excluded) {
                 Boolean matched = false;
-                for (String condition : this.config.getStringList("filter")) {
+                for (String condition : this.config.getParsed().filter) {
                     if (!condition.startsWith("!") && (new WildcardFileFilter(condition).accept(cfile) || path.toLowerCase().startsWith(condition.replace("\\", "/").toLowerCase()))) {
                         matched = true;
 

@@ -5,18 +5,20 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import com.loohp.limbo.plugins.LimboPlugin;
-import io.github.evercraftmc.backuper.shared.Plugin;
-import io.github.evercraftmc.backuper.shared.backuper.Backuper;
-import io.github.evercraftmc.backuper.shared.config.FileConfig;
 import io.github.evercraftmc.backuper.limbo.commands.LimboCommand;
 import io.github.evercraftmc.backuper.limbo.commands.backup.BackupCommand;
 import io.github.evercraftmc.backuper.limbo.commands.backup.ReloadCommand;
+import io.github.evercraftmc.backuper.shared.Plugin;
+import io.github.evercraftmc.backuper.shared.backuper.Backuper;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
+import io.github.evercraftmc.backuper.shared.config.FileConfig;
 
 public class LimboMain extends LimboPlugin implements Plugin {
     private static LimboMain Instance;
 
-    private FileConfig config;
-    private FileConfig messages;
+    private FileConfig<BackuperConfig> config;
+    private FileConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
@@ -37,39 +39,21 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         System.out.println("Loading config..");
 
-        this.config = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
+        this.config = new FileConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
         this.config.reload();
-
-        this.config.addDefault("destination", "/backups");
-        this.config.addDefault("limitType", Backuper.LimitType.AMOUNT);
-        this.config.addDefault("limit", 20);
-        this.config.addDefault("filter", Arrays.asList("/", "!/backups"));
-
-        this.config.copyDefaults();
 
         System.out.println("Finished loading config");
 
         System.out.println("Loading messages..");
 
-        this.messages = new FileConfig(this.getDataFolder().getAbsolutePath() + File.separator + "messages.json");
+        this.messages = new FileConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().getAbsolutePath() + File.separator + "messages.json");
         this.messages.reload();
-
-        this.messages.addDefault("error.noPerms", "&cYou need the permission {permission} to do that");
-        this.messages.addDefault("error.noConsole", "&cYou can't do that from the console");
-        this.messages.addDefault("error.playerNotFound", "&cCouldn't find player {player}");
-        this.messages.addDefault("error.invalidArgs", "&cInvalid arguments");
-        this.messages.addDefault("reload.reloading", "&aReloading plugin..");
-        this.messages.addDefault("reload.reloaded", "&aSuccessfully reloaded");
-        this.messages.addDefault("backup.backingUp", "&aBacking up data..");
-        this.messages.addDefault("backup.backedUp", "&aSuccessfully backed up all data");
-
-        this.messages.copyDefaults();
 
         System.out.println("Finished loading messages");
 
         System.out.println("Loading backuper..");
 
-        this.backuper = new Backuper(config, this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getString("destination"));
+        this.backuper = new Backuper(config, this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getParsed().destination);
 
         System.out.println("Finished loading backuper");
 
@@ -127,11 +111,11 @@ public class LimboMain extends LimboPlugin implements Plugin {
         return LimboMain.Instance;
     }
 
-    public FileConfig getPluginConfig() {
+    public FileConfig<BackuperConfig> getPluginConfig() {
         return this.config;
     }
 
-    public FileConfig getPluginMessages() {
+    public FileConfig<BackuperMessages> getPluginMessages() {
         return this.messages;
     }
 

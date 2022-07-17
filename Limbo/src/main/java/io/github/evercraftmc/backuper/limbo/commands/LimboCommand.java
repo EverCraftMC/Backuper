@@ -2,13 +2,13 @@ package io.github.evercraftmc.backuper.limbo.commands;
 
 import java.util.Arrays;
 import java.util.List;
-import io.github.evercraftmc.backuper.shared.PluginCommand;
-import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
-import io.github.evercraftmc.backuper.limbo.LimboMain;
-import io.github.evercraftmc.backuper.limbo.util.formatting.ComponentFormatter;
 import com.loohp.limbo.commands.CommandExecutor;
 import com.loohp.limbo.commands.CommandSender;
 import com.loohp.limbo.commands.TabCompletor;
+import io.github.evercraftmc.backuper.limbo.LimboMain;
+import io.github.evercraftmc.backuper.limbo.util.formatting.ComponentFormatter;
+import io.github.evercraftmc.backuper.shared.PluginCommand;
+import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
 
 public abstract class LimboCommand implements CommandExecutor, TabCompletor, PluginCommand {
     private String name;
@@ -58,7 +58,7 @@ public abstract class LimboCommand implements CommandExecutor, TabCompletor, Plu
         if (this.testPermissionSilent(sender)) {
             return true;
         } else {
-            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getString("error.noPerms").replace("{permission}", this.getPermission()))));
+            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().error.noPerms.replace("{permission}", this.getPermission()))));
 
             return false;
         }
