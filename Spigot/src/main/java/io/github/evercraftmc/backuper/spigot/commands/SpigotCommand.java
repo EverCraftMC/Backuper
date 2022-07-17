@@ -1,12 +1,12 @@
 package io.github.evercraftmc.backuper.spigot.commands;
 
 import java.util.List;
-import io.github.evercraftmc.backuper.spigot.SpigotMain;
-import io.github.evercraftmc.backuper.spigot.util.formatting.ComponentFormatter;
-import io.github.evercraftmc.backuper.shared.PluginCommand;
-import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import io.github.evercraftmc.backuper.shared.PluginCommand;
+import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
+import io.github.evercraftmc.backuper.spigot.SpigotMain;
+import io.github.evercraftmc.backuper.spigot.util.formatting.ComponentFormatter;
 
 public abstract class SpigotCommand extends Command implements PluginCommand {
     protected SpigotCommand(String name, String description, List<String> aliases, String permission) {
@@ -17,7 +17,7 @@ public abstract class SpigotCommand extends Command implements PluginCommand {
         this.setAliases(aliases);
         this.setPermission(permission);
         if (permission != null) {
-            this.permissionMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getString("error.noPerms").replace("{permission}", permission))));
+            this.permissionMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().error.noPerms.replace("{permission}", permission))));
         }
 
         this.register();
@@ -37,7 +37,7 @@ public abstract class SpigotCommand extends Command implements PluginCommand {
         if (this.testPermissionSilent(sender)) {
             return true;
         } else {
-            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getString("error.noPerms").replace("{permission}", this.getPermission()))));
+            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().error.noPerms.replace("{permission}", this.getPermission()))));
 
             return false;
         }

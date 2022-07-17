@@ -16,13 +16,13 @@ public class BackupCommand extends LimboCommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getString("backup.backingUp"))));
+        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.backingUp)));
 
         LimboMain.getInstance().getServer().getScheduler().runTaskAsync(LimboMain.getInstance(), new LimboTask() {
             public void run() {
                 LimboMain.getInstance().getBackuper().backup();
 
-                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getString("backup.backedUp"))));
+                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.backedUp)));
             }
         });
     }

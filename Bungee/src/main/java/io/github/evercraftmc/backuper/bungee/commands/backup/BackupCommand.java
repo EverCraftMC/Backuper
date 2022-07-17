@@ -15,13 +15,13 @@ public class BackupCommand extends BungeeCommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getString("backup.backingUp"))));
+        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.backingUp)));
 
         BungeeMain.getInstance().getProxy().getScheduler().runAsync(BungeeMain.getInstance(), new Runnable() {
             public void run() {
                 BungeeMain.getInstance().getBackuper().backup();
 
-                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getString("backup.backedUp"))));
+                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.backedUp)));
             }
         });
     }

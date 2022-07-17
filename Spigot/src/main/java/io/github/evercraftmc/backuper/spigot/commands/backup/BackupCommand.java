@@ -3,10 +3,10 @@ package io.github.evercraftmc.backuper.spigot.commands.backup;
 import java.util.Arrays;
 import java.util.List;
 import org.bukkit.command.CommandSender;
+import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
 import io.github.evercraftmc.backuper.spigot.SpigotMain;
 import io.github.evercraftmc.backuper.spigot.commands.SpigotCommand;
 import io.github.evercraftmc.backuper.spigot.util.formatting.ComponentFormatter;
-import io.github.evercraftmc.backuper.shared.util.formatting.TextFormatter;
 
 public class BackupCommand extends SpigotCommand {
     public BackupCommand(String name, String description, List<String> aliases, String permission) {
@@ -15,13 +15,13 @@ public class BackupCommand extends SpigotCommand {
 
     @Override
     public void run(CommandSender sender, String[] args) {
-        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getString("backup.backingUp"))));
+        sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.backingUp)));
 
         SpigotMain.getInstance().getServer().getScheduler().runTaskAsynchronously(SpigotMain.getInstance(), new Runnable() {
             public void run() {
                 SpigotMain.getInstance().getBackuper().backup();
 
-                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getString("backup.backedUp"))));
+                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.backedUp)));
             }
         });
     }
