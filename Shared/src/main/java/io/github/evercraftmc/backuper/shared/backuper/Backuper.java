@@ -62,7 +62,7 @@ public class Backuper {
                 x += backups[i].length();
             }
 
-            if (x > config.getParsed().limit) {
+            if (x / 1000000 > config.getParsed().limit) {
                 try {
                     Files.delete(backups[i].toPath());
                 } catch (IOException e) {
