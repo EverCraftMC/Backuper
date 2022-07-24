@@ -59,10 +59,10 @@ public class Backuper {
             if (config.getParsed().limitType == LimitType.AMOUNT) {
                 x++;
             } else if (config.getParsed().limitType == LimitType.SIZE) {
-                x += backups[i].length();
+                x += backups[i].length() / 1000000;
             }
 
-            if (x / 1000000 > config.getParsed().limit) {
+            if (x > config.getParsed().limit) {
                 try {
                     Files.delete(backups[i].toPath());
                 } catch (IOException e) {
