@@ -73,18 +73,6 @@ public class LimboMain extends LimboPlugin implements Plugin {
     public void onDisable() {
         System.out.println("Disabling plugin..");
 
-        System.out.println("Closing config..");
-
-        config.close();
-
-        System.out.println("Finished closing config..");
-
-        System.out.println("Closing messages..");
-
-        messages.close();
-
-        System.out.println("Finished closing messages..");
-
         System.out.println("Unregistering commands..");
 
         for (LimboCommand command : this.commands) {
