@@ -73,18 +73,6 @@ public class SpigotMain extends JavaPlugin implements Plugin {
     public void onDisable() {
         this.getLogger().info("Disabling plugin..");
 
-        this.getLogger().info("Closing config..");
-
-        config.close();
-
-        this.getLogger().info("Finished closing config..");
-
-        this.getLogger().info("Closing messages..");
-
-        messages.close();
-
-        this.getLogger().info("Finished closing messages..");
-
         this.getLogger().info("Unregistering commands..");
 
         for (SpigotCommand command : this.commands) {
