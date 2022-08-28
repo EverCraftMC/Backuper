@@ -40,6 +40,12 @@ public class BackupCommand extends BungeeCommand {
                 } else {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
                 }
+            } else if (args[0].equalsIgnoreCase("stop")) {
+                if (BungeeMain.getInstance().getBackuper().getCurrentRun() != null) {
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", BungeeMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", BungeeMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
+                } else {
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                }
             } else {
                 sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
             }

@@ -41,6 +41,12 @@ public class BackupCommand extends LimboCommand {
                 } else {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
                 }
+            } else if (args[0].equalsIgnoreCase("stop")) {
+                if (LimboMain.getInstance().getBackuper().getCurrentRun() != null) {
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", LimboMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", LimboMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((LimboMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((LimboMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
+                } else {
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                }
             } else {
                 sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
             }

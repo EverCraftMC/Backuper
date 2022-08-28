@@ -103,12 +103,20 @@ public class Backuper {
             this.stopped = true;
         }
 
+        public Integer getTotal() {
+            return this.total;
+        }
+
         public Integer getFinished() {
             return this.finished;
         }
 
         public Float getFinishedPercent() {
             return ((float) this.total) / ((float) this.finished);
+        }
+
+        public Long getTotalBytes() {
+            return this.totalBytes;
         }
 
         public Long getFinishedBytes() {

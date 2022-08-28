@@ -16,6 +16,8 @@ public class BackuperMessages {
         public String stopping = "&aStopping the current backup..";
         public String finished = "&aSuccessfully backed up all data";
 
+        public String status = "&a{files} / {totalFiles} files have been backed up ({bytes} / {totalBytes} megabytes)";
+
         public String alreadyRunning = "&cThere is already a backup running";
         public String notRunning = "&cThere is no backup currently running";
     }
