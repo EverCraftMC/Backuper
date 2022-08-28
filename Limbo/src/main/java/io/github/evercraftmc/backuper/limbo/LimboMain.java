@@ -53,7 +53,7 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         System.out.println("Loading backuper..");
 
-        this.backuper = new Backuper(config, this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getParsed().destination);
+        this.backuper = new Backuper(this.config);
 
         System.out.println("Finished loading backuper");
 
@@ -61,8 +61,8 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         this.commands = new ArrayList<LimboCommand>();
 
-        this.commands.add(new BackupCommand("backup", "Backup the server", Arrays.asList(), "backup.commands.backup").register());
-        this.commands.add(new ReloadCommand("backupreload", "Reload the plugin", Arrays.asList("breload"), "backup.commands.reload").register());
+        this.commands.add(new BackupCommand("backuper", "Backup the server", Arrays.asList(), "backuper.commands.backup").register());
+        this.commands.add(new ReloadCommand("backuperreload", "Reload the plugin", Arrays.asList(), "backuper.commands.reload").register());
 
         System.out.println("Finished loading commands");
 

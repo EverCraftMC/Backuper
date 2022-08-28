@@ -3,8 +3,6 @@ package io.github.evercraftmc.backuper.shared.backuper;
 public class BackuperMessages {
     public static class Error {
         public String noPerms = "&cYou need the permission \"{permission}\" to do that";
-        public String noConsole = "&cYou can't do that from the console";
-        public String playerNotFound = "&cCouldn't find player \"{player}\"";
         public String invalidArgs = "&cInvalid arguments";
     }
 
@@ -14,8 +12,12 @@ public class BackuperMessages {
     }
 
     public static class Backup {
-        public String backingUp = "&aBacking up data..";
-        public String backedUp = "&aSuccessfully backed up all data";
+        public String starting = "&aStarting a backup of all data..";
+        public String stopping = "&aStopping the current backup..";
+        public String finished = "&aSuccessfully backed up all data";
+
+        public String alreadyRunning = "&cThere is already a backup running";
+        public String notRunning = "&cThere is no backup currently running";
     }
 
     public Error error = new Error();

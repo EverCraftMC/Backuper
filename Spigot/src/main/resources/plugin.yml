@@ -6,5 +6,5 @@ description: A custom plugin to backup all server data
 author: Kale Ko
 website: https://github.com/EverCraft-MC/Backuper
 
-api-version: "1.18"
+api-version: "1.19"
 load: POSTWORLD

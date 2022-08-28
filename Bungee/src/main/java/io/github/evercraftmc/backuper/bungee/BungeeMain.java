@@ -52,7 +52,7 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
         this.getLogger().info("Loading backuper..");
 
-        this.backuper = new Backuper(config, this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getProxy().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getParsed().destination);
+        this.backuper = new Backuper(config);
 
         this.getLogger().info("Finished loading backuper");
 
@@ -60,8 +60,8 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
         this.commands = new ArrayList<BungeeCommand>();
 
-        this.commands.add(new BackupCommand("bungeebackup", "Backup the server", Arrays.asList("bbackup"), "backup.commands.backup").register());
-        this.commands.add(new ReloadCommand("bungeebackupreload", "Reload the plugin", Arrays.asList("bbackupreload", "bbreload"), "backup.commands.reload").register());
+        this.commands.add(new BackupCommand("bungeebackuper", "Backup the server", Arrays.asList("bbackuper"), "backup.commands.backup").register());
+        this.commands.add(new ReloadCommand("bungeebackuperreload", "Reload the plugin", Arrays.asList("bbackuperreload"), "backup.commands.reload").register());
 
         this.getLogger().info("Finished loading commands");
 

@@ -53,7 +53,7 @@ public class SpigotMain extends JavaPlugin implements Plugin {
 
         this.getLogger().info("Loading backuper..");
 
-        this.backuper = new Backuper(config, this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath(), this.getServer().getPluginsFolder().getAbsoluteFile().getParentFile().getAbsolutePath() + config.getParsed().destination);
+        this.backuper = new Backuper(this.config);
 
         this.getLogger().info("Finished loading backuper");
 
@@ -61,8 +61,8 @@ public class SpigotMain extends JavaPlugin implements Plugin {
 
         this.commands = new ArrayList<SpigotCommand>();
 
-        this.commands.add(new BackupCommand("backup", "Backup the server", Arrays.asList(), "backup.commands.backup").register());
-        this.commands.add(new ReloadCommand("backupreload", "Reload the plugin", Arrays.asList("breload"), "backup.commands.reload").register());
+        this.commands.add(new BackupCommand("backuper", "Backup the server", Arrays.asList(), "backuper.commands.backup").register());
+        this.commands.add(new ReloadCommand("backuperreload", "Reload the plugin", Arrays.asList(), "backuper.commands.reload").register());
 
         this.getLogger().info("Finished loading commands");
 
