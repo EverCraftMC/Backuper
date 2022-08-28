@@ -34,7 +34,7 @@ public class BackupCommand extends LimboCommand {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.alreadyRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("stop")) {
-                if (LimboMain.getInstance().getBackuper().getCurrentRun() == null) {
+                if (LimboMain.getInstance().getBackuper().getCurrentRun() != null) {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().getParsed().backup.stopping)));
 
                     LimboMain.getInstance().getBackuper().stopBackup();

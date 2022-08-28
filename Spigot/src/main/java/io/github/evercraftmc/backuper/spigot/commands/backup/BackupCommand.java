@@ -33,7 +33,7 @@ public class BackupCommand extends SpigotCommand {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.alreadyRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("stop")) {
-                if (SpigotMain.getInstance().getBackuper().getCurrentRun() == null) {
+                if (SpigotMain.getInstance().getBackuper().getCurrentRun() != null) {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.stopping)));
 
                     SpigotMain.getInstance().getBackuper().stopBackup();

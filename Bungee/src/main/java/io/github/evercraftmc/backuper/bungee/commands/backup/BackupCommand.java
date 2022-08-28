@@ -33,7 +33,7 @@ public class BackupCommand extends BungeeCommand {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.alreadyRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("stop")) {
-                if (BungeeMain.getInstance().getBackuper().getCurrentRun() == null) {
+                if (BungeeMain.getInstance().getBackuper().getCurrentRun() != null) {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.stopping)));
 
                     BungeeMain.getInstance().getBackuper().stopBackup();
