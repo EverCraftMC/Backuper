@@ -40,7 +40,7 @@ public class BackupCommand extends BungeeCommand {
                 } else {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
                 }
-            } else if (args[0].equalsIgnoreCase("stop")) {
+            } else if (args[0].equalsIgnoreCase("status")) {
                 if (BungeeMain.getInstance().getBackuper().getCurrentRun() != null) {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", BungeeMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", BungeeMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
                 } else {
@@ -61,6 +61,7 @@ public class BackupCommand extends BungeeCommand {
         if (args.length == 1) {
             list.add("start");
             list.add("stop");
+            list.add("status");
         } else {
             return Arrays.asList();
         }

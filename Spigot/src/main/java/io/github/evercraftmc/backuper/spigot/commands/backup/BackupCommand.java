@@ -40,7 +40,7 @@ public class BackupCommand extends SpigotCommand {
                 } else {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
                 }
-            } else if (args[0].equalsIgnoreCase("stop")) {
+            } else if (args[0].equalsIgnoreCase("status")) {
                 if (SpigotMain.getInstance().getBackuper().getCurrentRun() != null) {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", SpigotMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", SpigotMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
                 } else {
@@ -61,6 +61,7 @@ public class BackupCommand extends SpigotCommand {
         if (args.length == 1) {
             list.add("start");
             list.add("stop");
+            list.add("status");
         } else {
             return Arrays.asList();
         }
