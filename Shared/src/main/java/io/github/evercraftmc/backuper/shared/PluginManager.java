@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.shared.util.StringUtils;
 
 public class PluginManager {
-    public static List<Plugin> registeredPlugins;
+    private static List<Plugin> registeredPlugins;
 
     public static Plugin getInstance() {
         return PluginManager.registeredPlugins.get(0);
