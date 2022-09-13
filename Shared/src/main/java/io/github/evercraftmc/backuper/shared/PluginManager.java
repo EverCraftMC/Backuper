@@ -3,6 +3,7 @@ package io.github.evercraftmc.backuper.shared;
 import java.io.UnsupportedEncodingException;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.ConsoleHandler;
 import java.util.logging.Formatter;
@@ -13,7 +14,7 @@ import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.shared.util.StringUtils;
 
 public class PluginManager {
-    private static List<Plugin> registeredPlugins;
+    private static List<Plugin> registeredPlugins = new ArrayList<Plugin>();
 
     public static Plugin getInstance() {
         return PluginManager.registeredPlugins.get(0);
