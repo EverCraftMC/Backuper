@@ -4,8 +4,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import org.bukkit.plugin.java.JavaPlugin;
 import io.github.evercraftmc.backuper.shared.Plugin;
+import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
@@ -17,6 +19,8 @@ import io.github.evercraftmc.backuper.spigot.commands.backup.ReloadCommand;
 public class SpigotMain extends JavaPlugin implements Plugin {
     private static SpigotMain Instance;
 
+    private Logger logger;
+
     private FileConfig<BackuperConfig> config;
     private FileConfig<BackuperMessages> messages;
 
@@ -27,10 +31,14 @@ public class SpigotMain extends JavaPlugin implements Plugin {
     @Override
     public void onLoad() {
         SpigotMain.Instance = this;
+
+        PluginManager.register(this);
     }
 
     @Override
     public void onEnable() {
+        this.logger = PluginManager.createLogger(this.getDescription().getName(), "[{timeC} {typeU}]: [{name}] {message}");
+
         this.getLogger().info("Loading plugin..");
 
         if (!this.getDataFolder().exists()) {
@@ -97,6 +105,11 @@ public class SpigotMain extends JavaPlugin implements Plugin {
 
     public static SpigotMain getInstance() {
         return SpigotMain.Instance;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return this.logger;
     }
 
     public FileConfig<BackuperConfig> getPluginConfig() {

@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.bungee.commands.BungeeCommand;
 import io.github.evercraftmc.backuper.bungee.commands.backup.BackupCommand;
 import io.github.evercraftmc.backuper.bungee.commands.backup.ReloadCommand;
+import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
@@ -15,6 +17,8 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper.shared.Plugin {
     private static BungeeMain Instance;
+
+    private Logger logger;
 
     private FileConfig<BackuperConfig> config;
     private FileConfig<BackuperMessages> messages;
@@ -26,10 +30,14 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
     @Override
     public void onLoad() {
         BungeeMain.Instance = this;
+
+        PluginManager.register(this);
     }
 
     @Override
     public void onEnable() {
+        this.logger = PluginManager.createLogger(this.getDescription().getName(), "[{timeC} {typeU}]: [{name}] {message}");
+
         this.getLogger().info("Loading plugin..");
 
         if (!this.getDataFolder().exists()) {
@@ -96,6 +104,11 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
     public static BungeeMain getInstance() {
         return BungeeMain.Instance;
+    }
+
+    @Override
+    public Logger getLogger() {
+        return this.logger;
     }
 
     public FileConfig<BackuperConfig> getPluginConfig() {

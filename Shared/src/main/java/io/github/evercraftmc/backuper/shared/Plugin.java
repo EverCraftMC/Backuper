@@ -1,5 +1,6 @@
 package io.github.evercraftmc.backuper.shared;
 
+import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
 import io.github.evercraftmc.backuper.shared.config.FileConfig;
@@ -14,6 +15,8 @@ public interface Plugin {
 
         this.onEnable();
     }
+
+    public Logger getLogger();
 
     public FileConfig<BackuperConfig> getPluginConfig();
 
