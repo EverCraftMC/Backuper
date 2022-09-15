@@ -6,8 +6,9 @@ archivesBaseName = "shared"
 version = project.project_version
 
 dependencies {
+    depencancy "org.apache.commons:commons-lang3:${project.apache_lang_version}"
+    depencancy "org.apache.commons:commons-io:${project.apache_io_version}"
     compileOnly "com.google.code.gson:gson:${project.gson_version}"
-    depencancy "org.apache.commons:commons-io:${project.apache_commons_io_version}"
 }
 
 tasks.register("buildFat", Jar) {

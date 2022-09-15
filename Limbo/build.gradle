@@ -13,7 +13,7 @@ repositories {
 
 dependencies {
     depencancy project(':Shared')
-    depencancy "org.apache.commons:commons-io:${project.apache_commons_io_version}"
+    depencancy "org.apache.commons:commons-io:${project.apache_io_version}"
 
     compileOnly "com.loohp:Limbo:${project.limbo_version}"
 }
@@ -37,6 +37,8 @@ tasks.register("buildFat", Jar) {
 }
 
 processResources {
+	inputs.property "plugin_version", project.version
+
     filesMatching("plugin.yml") {
         expand "plugin_version": project.version
     }
