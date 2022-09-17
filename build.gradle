@@ -9,7 +9,7 @@ buildscript {
 }
 
 plugins {
-    id 'java'
+    id "java"
 }
 
 sourceCompatibility = JavaVersion.toVersion(project.java_version)
@@ -27,11 +27,11 @@ subprojects {
     group = "io.github.evercraftmc.backuper"
 
     configurations {
-        depencancy
-        depencancy.canBeResolved = true
+        dependency
+        dependency.canBeResolved = true
 
         compileOnly {
-            extendsFrom depencancy
+            extendsFrom dependency
         }
     }
 

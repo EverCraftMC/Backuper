@@ -1,5 +1,5 @@
 plugins {
-    id 'java'
+    id "java"
 }
 
 archivesBaseName = "spigot"
@@ -10,8 +10,8 @@ repositories {
 }
 
 dependencies {
-    depencancy project(':Shared')
-    depencancy "org.apache.commons:commons-io:${project.apache_io_version}"
+    dependency project(":Shared")
+    dependency project(path: ":Shared", configuration: "dependency")
 
     compileOnly "org.purpurmc.purpur:purpur-api:${project.purpur_version}"
 }
@@ -31,7 +31,7 @@ tasks.register("buildFat", Jar) {
     classifier = "fat"
 
     from files(project.sourceSets.main.output)
-    from files(project.configurations.depencancy.collect { it.isDirectory() ? it : zipTree(it) })
+    from files(project.configurations.dependency.collect { it.isDirectory() ? it : zipTree(it) })
 }
 
 processResources {

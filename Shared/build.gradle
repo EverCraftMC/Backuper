@@ -1,14 +1,14 @@
 plugins {
-    id 'java'
+    id "java"
 }
 
 archivesBaseName = "shared"
 version = project.project_version
 
 dependencies {
-    depencancy "org.apache.commons:commons-lang3:${project.apache_lang_version}"
-    depencancy "org.apache.commons:commons-io:${project.apache_io_version}"
-    compileOnly "com.google.code.gson:gson:${project.gson_version}"
+    dependency "org.apache.commons:commons-lang3:${project.apache_lang_version}"
+    dependency "org.apache.commons:commons-io:${project.apache_io_version}"
+    dependency "com.google.code.gson:gson:${project.gson_version}"
 }
 
 tasks.register("buildFat", Jar) {
@@ -21,5 +21,5 @@ tasks.register("buildFat", Jar) {
     classifier = "fat"
 
     from files(project.sourceSets.main.output)
-    from files(project.configurations.depencancy.collect { it.isDirectory() ? it : zipTree(it) })
+    from files(project.configurations.dependency.collect { it.isDirectory() ? it : zipTree(it) })
 }
