@@ -11,6 +11,8 @@ public class BackuperConfig {
     public String destination = "/backups";
     public List<String> filter = new ArrayList<String>();
 
+    public Integer compressionLevel = 7;
+
     public Integer limit = 20;
     public LimitType limitType = LimitType.AMOUNT;
 }
