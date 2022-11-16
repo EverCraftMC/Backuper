@@ -18,6 +18,7 @@ import java.util.zip.ZipOutputStream;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.LimitType;
+import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.SortMode;
 import io.github.evercraftmc.backuper.shared.config.FileConfig;
 
 public class Backuper {
@@ -33,6 +34,7 @@ public class Backuper {
         private File source;
         private File destination;
 
+        public SortMode sortMode;
         private List<String> filter;
 
         public Integer compressionLevel;
@@ -52,10 +54,11 @@ public class Backuper {
         private Integer finished = 0;
         private Long finishedBytes = 0l;
 
-        public BackupRun(File source, File destination, List<String> filter, Integer compressionLevel, LimitType limitType, Integer limit, Boolean trackStats) {
+        public BackupRun(File source, File destination, SortMode sortMode, List<String> filter, Integer compressionLevel, LimitType limitType, Integer limit, Boolean trackStats) {
             this.source = source;
             this.destination = destination;
 
+            this.sortMode = sortMode;
             this.filter = filter;
 
             this.compressionLevel = compressionLevel;
@@ -70,6 +73,16 @@ public class Backuper {
             try {
                 this.files = this.filterFiles(this.getFiles(this.source, true));
 
+                if (this.sortMode == SortMode.SIZE) {
+                    this.files.sort((a, b) -> {
+                        return (int) (b.length() - a.length());
+                    });
+                } else if (this.sortMode == SortMode.SIZE_REVERSE) {
+                    this.files.sort((a, b) -> {
+                        return (int) (a.length() - b.length());
+                    });
+                }
+
                 if (this.trackStats) {
                     for (File file : this.files) {
                         total++;
@@ -82,11 +95,6 @@ public class Backuper {
                 for (File file : this.files) {
                     if (!this.stopped) {
                         this.backupFile(zip, file);
-
-                        if (this.trackStats) {
-                            this.finished++;
-                            this.finishedBytes += file.length();
-                        }
                     } else {
                         zip.close();
 
@@ -195,6 +203,10 @@ public class Backuper {
 
         private void backupFile(ZipOutputStream zip, File file) {
             try {
+                if (!file.exists()) {
+                    return;
+                }
+
                 ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(this.source.getAbsolutePath() + File.separator, ""));
                 entry.setTime(file.lastModified());
                 zip.putNextEntry(entry);
@@ -204,7 +216,13 @@ public class Backuper {
                 int read = -1;
                 while ((read = fileReader.read()) != -1) {
                     zip.write(read);
+
+                    if (this.trackStats) {
+                        this.finishedBytes += 2;
+                    }
                 }
+
+                this.finished++;
 
                 zip.closeEntry();
                 fileReader.close();
@@ -240,7 +258,7 @@ public class Backuper {
 
     public void startBackup() {
         if (this.currentRun == null) {
-            this.currentRun = new BackupRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().filter, this.config.getParsed().compressionLevel, this.config.getParsed().limitType, this.config.getParsed().limit, true);
+            this.currentRun = new BackupRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().sortMode, this.config.getParsed().filter, this.config.getParsed().compressionLevel, this.config.getParsed().limitType, this.config.getParsed().limit, true);
             this.currentRun.run();
 
             this.currentRun = null;
