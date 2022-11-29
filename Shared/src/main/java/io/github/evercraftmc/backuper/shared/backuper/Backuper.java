@@ -218,7 +218,7 @@ public class Backuper {
                     zip.write(read);
 
                     if (this.trackStats) {
-                        this.finishedBytes += 2;
+                        this.finishedBytes++;
                     }
                 }
 
