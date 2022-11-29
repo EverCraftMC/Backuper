@@ -1,9 +1,9 @@
 package io.github.evercraftmc.backuper.shared.backuper;
 
-import java.io.BufferedReader;
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.time.Instant;
@@ -211,10 +211,10 @@ public class Backuper {
                 entry.setTime(file.lastModified());
                 zip.putNextEntry(entry);
 
-                BufferedReader fileReader = new BufferedReader(new FileReader(file));
+                BufferedInputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
 
                 int read = -1;
-                while ((read = fileReader.read()) != -1) {
+                while ((read = fileInputStream.read()) != -1) {
                     zip.write(read);
 
                     if (this.trackStats) {
@@ -225,7 +225,7 @@ public class Backuper {
                 this.finished++;
 
                 zip.closeEntry();
-                fileReader.close();
+                fileInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
