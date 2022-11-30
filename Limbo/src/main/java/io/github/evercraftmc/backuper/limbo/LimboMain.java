@@ -81,6 +81,14 @@ public class LimboMain extends LimboPlugin implements Plugin {
     public void onDisable() {
         this.getLogger().info("Disabling plugin..");
 
+        if (this.backuper.getCurrentRun() != null) {
+            this.getLogger().info("Stopping backup..");
+
+            this.backuper.stopBackup();
+
+            this.getLogger().info("Finished stopping backup..");
+        }
+
         this.getLogger().info("Unregistering commands..");
 
         for (LimboCommand command : this.commands) {

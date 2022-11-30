@@ -1,6 +1,7 @@
 package io.github.evercraftmc.backuper.shared.backuper;
 
 import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -34,24 +35,27 @@ public class Backuper {
         private File source;
         private File destination;
 
-        public SortMode sortMode;
+        private SortMode sortMode;
         private List<String> filter;
 
-        public Integer compressionLevel;
+        private Integer compressionLevel;
 
         private LimitType limitType;
         private Integer limit;
 
         private Boolean trackStats;
 
+        private File zipFile;
+        private ZipOutputStream zip;
+
         private List<File> files = new ArrayList<File>();
 
         private Boolean stopped = false;
 
-        private Integer total = 0;
+        private Integer totalFiles = 0;
         private Long totalBytes = 0l;
 
-        private Integer finished = 0;
+        private Integer finishedFiles = 0;
         private Long finishedBytes = 0l;
 
         public BackupRun(File source, File destination, SortMode sortMode, List<String> filter, Integer compressionLevel, LimitType limitType, Integer limit, Boolean trackStats) {
@@ -69,9 +73,11 @@ public class Backuper {
             this.trackStats = trackStats;
         }
 
-        public void run() {
+        public void start() {
             try {
-                this.files = this.filterFiles(this.getFiles(this.source, true));
+                this.files = this.getFiles(this.source, true);
+
+                this.files = this.filterFiles(this.files);
 
                 if (this.sortMode == SortMode.SIZE) {
                     this.files.sort((a, b) -> {
@@ -85,47 +91,59 @@ public class Backuper {
 
                 if (this.trackStats) {
                     for (File file : this.files) {
-                        total++;
-                        totalBytes += file.length();
+                        this.totalFiles++;
+                        this.totalBytes += file.length();
                     }
                 }
 
-                ZipOutputStream zip = this.createZip();
+                this.zipFile = new File(this.destination.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-HH-mm-ss").withLocale(Locale.US).withZone(ZoneId.of("-05:00")).format(Instant.now()) + ".zip");
+                if (!zipFile.exists()) {
+                    zipFile.createNewFile();
+                }
+
+                this.zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(this.zipFile)));
+                this.zip.setLevel(this.compressionLevel);
 
                 for (File file : this.files) {
                     if (!this.stopped) {
-                        this.backupFile(zip, file);
+                        this.backupFile(file);
                     } else {
-                        zip.close();
-
                         return;
                     }
                 }
 
-                zip.close();
+                this.zip.close();
 
-                if (this.limit != -1) {
-                    this.cullOld(this.limitType, this.limit);
-                }
+                this.cullOld();
+
+                this.stopped = true;
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
         public void stop() {
+            if (this.zipFile != null) {
+                try {
+                    Files.delete(this.zipFile.toPath());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
             this.stopped = true;
         }
 
         public Integer getTotal() {
-            return this.total;
+            return this.totalFiles;
         }
 
         public Integer getFinished() {
-            return this.finished;
+            return this.finishedFiles;
         }
 
         public Float getFinishedPercent() {
-            return ((float) this.total) / ((float) this.finished);
+            return ((float) this.totalFiles) / ((float) this.finishedFiles);
         }
 
         public Long getTotalBytes() {
@@ -138,24 +156,6 @@ public class Backuper {
 
         public Float getFinishedBytesPercent() {
             return (float) (this.totalBytes / this.finishedBytes);
-        }
-
-        private ZipOutputStream createZip() {
-            try {
-                File file = new File(this.destination.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-HH-mm-ss").withLocale(Locale.US).withZone(ZoneId.of("-05:00")).format(Instant.now()) + ".zip");
-                if (!file.exists()) {
-                    file.createNewFile();
-                }
-                FileOutputStream fileStream = new FileOutputStream(file);
-                ZipOutputStream zipSteam = new ZipOutputStream(fileStream);
-                zipSteam.setLevel(this.compressionLevel);
-
-                return zipSteam;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return null;
         }
 
         private List<File> getFiles(File directory, Boolean deep) {
@@ -201,7 +201,7 @@ public class Backuper {
             return filteredFiles;
         }
 
-        private void backupFile(ZipOutputStream zip, File file) {
+        private void backupFile(File file) {
             try {
                 if (!file.exists()) {
                     return;
@@ -209,29 +209,34 @@ public class Backuper {
 
                 ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(this.source.getAbsolutePath() + File.separator, ""));
                 entry.setTime(file.lastModified());
-                zip.putNextEntry(entry);
+                this.zip.putNextEntry(entry);
 
                 BufferedInputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
 
-                int read = -1;
-                while ((read = fileInputStream.read()) != -1) {
-                    zip.write(read);
+                byte[] buffer = new byte[2048];
+                int read = 0;
+                while ((read = fileInputStream.read(buffer)) > 0) {
+                    this.zip.write(buffer, 0, read);
 
                     if (this.trackStats) {
-                        this.finishedBytes++;
+                        this.finishedBytes += read;
+                    }
+
+                    if (read != buffer.length) {
+                        break;
                     }
                 }
 
-                this.finished++;
+                this.finishedFiles++;
 
-                zip.closeEntry();
+                this.zip.closeEntry();
                 fileInputStream.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
 
-        private void cullOld(LimitType limitType, Integer limit) {
+        private void cullOld() {
             try {
                 List<File> backups = this.getFiles(this.destination, false);
                 backups.sort(Comparator.comparingLong(File::lastModified).reversed());
@@ -259,7 +264,7 @@ public class Backuper {
     public void startBackup() {
         if (this.currentRun == null) {
             this.currentRun = new BackupRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().sortMode, this.config.getParsed().filter, this.config.getParsed().compressionLevel, this.config.getParsed().limitType, this.config.getParsed().limit, true);
-            this.currentRun.run();
+            this.currentRun.start();
 
             this.currentRun = null;
         } else {

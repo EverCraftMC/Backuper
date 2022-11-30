@@ -76,6 +76,14 @@ public class SpigotMain extends JavaPlugin implements Plugin {
     public void onDisable() {
         this.getLogger().info("Disabling plugin..");
 
+        if (this.backuper.getCurrentRun() != null) {
+            this.getLogger().info("Stopping backup..");
+
+            this.backuper.stopBackup();
+
+            this.getLogger().info("Finished stopping backup..");
+        }
+
         this.getLogger().info("Unregistering commands..");
 
         for (SpigotCommand command : this.commands) {
