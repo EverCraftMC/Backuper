@@ -11,14 +11,11 @@ dependencies {
     dependency "com.google.code.gson:gson:${project.gson_version}"
 }
 
-tasks.register("buildFat", Jar) {
-    dependsOn tasks.build
-
+jar {
     sourceCompatibility = JavaVersion.toVersion(project.java_version)
     targetCompatibility = JavaVersion.toVersion(project.java_version)
 
     duplicatesStrategy = "exclude"
-    classifier = "fat"
 
     from files(project.sourceSets.main.output)
     from files(project.configurations.dependency.collect { it.isDirectory() ? it : zipTree(it) })
