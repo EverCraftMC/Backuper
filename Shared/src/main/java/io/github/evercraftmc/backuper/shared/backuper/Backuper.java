@@ -11,7 +11,6 @@ import java.time.Instant;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.zip.ZipEntry;
@@ -25,80 +24,117 @@ import io.github.evercraftmc.backuper.shared.config.FileConfig;
 public class Backuper {
     private FileConfig<BackuperConfig> config;
 
-    private BackupRun currentRun = null;
+    private BackuperRun currentRun = null;
 
     public Backuper(FileConfig<BackuperConfig> config) {
         this.config = config;
     }
 
-    public static class BackupRun {
+    public static class BackuperRun {
         private File source;
         private File destination;
 
-        private SortMode sortMode;
         private List<String> filter;
+        private SortMode sortMode;
 
-        private Integer compressionLevel;
+        private int compressionLevel;
 
+        private String timezone;
+
+        private int limit;
         private LimitType limitType;
-        private Integer limit;
 
-        private Boolean trackStats;
+        private boolean trackStats;
 
         private File zipFile;
         private ZipOutputStream zip;
 
         private List<File> files = new ArrayList<File>();
 
-        private Boolean stopped = false;
+        private int totalFiles = 0;
+        private int finishedFiles = 0;
 
-        private Integer totalFiles = 0;
-        private Long totalBytes = 0l;
+        private long totalBytes = 0l;
+        private long finishedBytes = 0l;
 
-        private Integer finishedFiles = 0;
-        private Long finishedBytes = 0l;
+        private boolean stopped = false;
 
-        public BackupRun(File source, File destination, SortMode sortMode, List<String> filter, Integer compressionLevel, LimitType limitType, Integer limit, Boolean trackStats) {
+        public BackuperRun(File source, File destination, List<String> filter, SortMode sortMode, int compressionLevel, String timezone, int limit, LimitType limitType, boolean trackStats) {
             this.source = source;
             this.destination = destination;
 
-            this.sortMode = sortMode;
             this.filter = filter;
+            this.sortMode = sortMode;
 
             this.compressionLevel = compressionLevel;
 
-            this.limitType = limitType;
+            this.timezone = timezone;
+
             this.limit = limit;
+            this.limitType = limitType;
 
             this.trackStats = trackStats;
         }
 
-        public void start() {
-            try {
+        public void start() throws IOException {
+            if (!this.stopped) {
                 this.files = this.getFiles(this.source, true);
 
                 this.files = this.filterFiles(this.files);
 
                 if (this.sortMode == SortMode.SIZE) {
                     this.files.sort((a, b) -> {
-                        return (int) (b.length() - a.length());
+                        if (a.length() < b.length()) {
+                            return 1;
+                        } else if (b.length() < a.length()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
                     });
                 } else if (this.sortMode == SortMode.SIZE_REVERSE) {
                     this.files.sort((a, b) -> {
-                        return (int) (a.length() - b.length());
+                        if (a.length() > b.length()) {
+                            return 1;
+                        } else if (b.length() > a.length()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                } else if (this.sortMode == SortMode.MODIFIED) {
+                    this.files.sort((a, b) -> {
+                        if (a.lastModified() < b.lastModified()) {
+                            return 1;
+                        } else if (b.lastModified() < a.lastModified()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    });
+                } else if (this.sortMode == SortMode.MODIFIED_REVERSE) {
+                    this.files.sort((a, b) -> {
+                        if (a.lastModified() > b.lastModified()) {
+                            return 1;
+                        } else if (b.lastModified() > a.lastModified()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
                     });
                 }
 
                 if (this.trackStats) {
+                    this.totalFiles = this.files.size();
+
                     for (File file : this.files) {
-                        this.totalFiles++;
                         this.totalBytes += file.length();
                     }
                 }
 
-                this.zipFile = new File(this.destination.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-HH-mm-ss").withLocale(Locale.US).withZone(ZoneId.of("-05:00")).format(Instant.now()) + ".zip");
+                this.zipFile = new File(this.destination.getAbsolutePath() + File.separator + "Backup-" + DateTimeFormatter.ofPattern("MM-d-yy-HH-mm-ss").withLocale(Locale.US).withZone(ZoneId.of(this.timezone)).format(Instant.now()) + ".zip");
                 if (!zipFile.exists()) {
-                    zipFile.createNewFile();
+                    Files.createFile(zipFile.toPath());
                 }
 
                 this.zip = new ZipOutputStream(new BufferedOutputStream(new FileOutputStream(this.zipFile)));
@@ -106,7 +142,9 @@ public class Backuper {
 
                 for (File file : this.files) {
                     if (!this.stopped) {
-                        this.backupFile(file);
+                        if (file.exists()) {
+                            this.backupFile(file);
+                        }
                     } else {
                         return;
                     }
@@ -117,53 +155,58 @@ public class Backuper {
                 this.cullOld();
 
                 this.stopped = true;
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else {
+                throw new RuntimeException("Backuper run is already stopped");
             }
         }
 
-        public void stop() {
-            if (this.zipFile != null) {
-                try {
+        public boolean isStopped() {
+            return this.stopped;
+        }
+
+        public void stop() throws IOException {
+            if (!this.stopped) {
+                if (this.zipFile != null) {
                     Files.delete(this.zipFile.toPath());
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
+
+                this.stopped = true;
+            } else {
+                throw new RuntimeException("Backuper run is already stopped");
             }
-
-            this.stopped = true;
         }
 
-        public Integer getTotal() {
-            return this.totalFiles;
-        }
-
-        public Integer getFinished() {
+        public int getFinished() {
             return this.finishedFiles;
         }
 
-        public Float getFinishedPercent() {
-            return ((float) this.totalFiles) / ((float) this.finishedFiles);
+        public int getTotal() {
+            return this.totalFiles;
         }
 
-        public Long getTotalBytes() {
-            return this.totalBytes;
+        public float getFinishedPercent() {
+            return ((float) this.finishedFiles) / ((float) this.totalFiles);
         }
 
-        public Long getFinishedBytes() {
+        public long getFinishedBytes() {
             return this.finishedBytes;
         }
 
-        public Float getFinishedBytesPercent() {
-            return (float) (this.totalBytes / this.finishedBytes);
+        public long getTotalBytes() {
+            return this.totalBytes;
+        }
+
+        public float getFinishedBytesPercent() {
+            return ((float) this.finishedBytes) / ((float) this.totalBytes);
         }
 
         private List<File> getFiles(File directory, Boolean deep) {
             List<File> files = new ArrayList<File>();
 
             for (File file : directory.listFiles()) {
-                if (file.isDirectory() && deep) {
-                    files.addAll(this.getFiles(file, deep));
+                if (deep && file.isDirectory() && isValid(file)) {
+                    List<File> childFiles = this.getFiles(file, deep);
+                    files.addAll(childFiles);
                 } else if (file.isFile()) {
                     files.add(file);
                 }
@@ -176,97 +219,110 @@ public class Backuper {
             List<File> filteredFiles = new ArrayList<File>();
 
             for (File file : files) {
-                String path = file.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace(File.separator, "/");
-
-                Boolean excluded = false;
-                for (String condition : this.filter) {
-                    if ((condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase().substring(1), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().substring(1).replace(File.separator, "/")))) || file == this.destination) {
-                        excluded = true;
-
-                        break;
-                    }
-                }
-
-                if (!excluded) {
-                    for (String condition : this.filter) {
-                        if (!condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase(), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().replace(File.separator, "/")))) {
-                            filteredFiles.add(file);
-
-                            break;
-                        }
-                    }
+                if (isValid(file)) {
+                    filteredFiles.add(file);
                 }
             }
 
             return filteredFiles;
         }
 
-        private void backupFile(File file) {
-            try {
-                if (!file.exists()) {
-                    return;
+        private boolean isValid(File file) {
+            String path = file.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace(File.separator, "/");
+
+            Boolean excluded = false;
+            for (String condition : this.filter) {
+                if ((condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase().substring(1), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().substring(1).replace(File.separator, "/")))) || file.equals(this.destination)) {
+                    excluded = true;
+
+                    break;
                 }
-
-                ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(this.source.getAbsolutePath() + File.separator, ""));
-                entry.setTime(file.lastModified());
-                this.zip.putNextEntry(entry);
-
-                BufferedInputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
-
-                byte[] buffer = new byte[2048];
-                int read = 0;
-                while ((read = fileInputStream.read(buffer)) > 0) {
-                    this.zip.write(buffer, 0, read);
-
-                    if (this.trackStats) {
-                        this.finishedBytes += read;
-                    }
-
-                    if (read != buffer.length) {
-                        break;
-                    }
-                }
-
-                this.finishedFiles++;
-
-                this.zip.closeEntry();
-                fileInputStream.close();
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+
+            if (!excluded) {
+                for (String condition : this.filter) {
+                    if (!condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase(), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().replace(File.separator, "/")))) {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
         }
 
-        private void cullOld() {
-            try {
-                List<File> backups = this.getFiles(this.destination, false);
-                backups.sort(Comparator.comparingLong(File::lastModified).reversed());
+        private void backupFile(File file) throws IOException {
+            ZipEntry entry = new ZipEntry(file.getAbsolutePath().replace(this.source.getAbsolutePath() + File.separator, ""));
+            entry.setTime(file.lastModified());
+            this.zip.putNextEntry(entry);
 
-                Long x = 0l;
-                for (File backup : backups) {
-                    if (backup.getName().startsWith("Backup-")) {
-                        if (this.limitType == LimitType.AMOUNT) {
-                            x++;
-                        } else if (this.limitType == LimitType.SIZE) {
-                            x += backup.length() / 1000000;
-                        }
+            BufferedInputStream fileInputStream = new BufferedInputStream(new FileInputStream(file));
 
-                        if (x > this.limit) {
-                            Files.delete(backup.toPath());
-                        }
+            byte[] buffer = new byte[4096];
+            int read = 0;
+            while ((read = fileInputStream.read(buffer)) > 0) {
+                this.zip.write(buffer, 0, read);
+
+                if (this.trackStats) {
+                    this.finishedBytes += read;
+                }
+
+                if (read != buffer.length) {
+                    break;
+                }
+            }
+
+            if (this.trackStats) {
+                this.finishedFiles++;
+            }
+
+            fileInputStream.close();
+            this.zip.closeEntry();
+        }
+
+        private void cullOld() throws IOException {
+            List<File> files = this.getFiles(this.destination, false);
+
+            files.sort((a, b) -> {
+                if (a.lastModified() > b.lastModified()) {
+                    return 1;
+                } else if (b.lastModified() > a.lastModified()) {
+                    return -1;
+                } else {
+                    return 0;
+                }
+            });
+
+            long x = 0l;
+            for (File file : files) {
+                if (file.getName().startsWith("Backup-")) {
+                    if (this.limitType == LimitType.AMOUNT) {
+                        x++;
+                    } else if (this.limitType == LimitType.SIZE) {
+                        x += file.length() / 1000000;
+                    }
+
+                    if (x > this.limit) {
+                        Files.delete(file.toPath());
                     }
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
         }
     }
 
+    public BackuperRun getCurrentRun() {
+        return this.currentRun;
+    }
+
     public void startBackup() {
         if (this.currentRun == null) {
-            this.currentRun = new BackupRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().sortMode, this.config.getParsed().filter, this.config.getParsed().compressionLevel, this.config.getParsed().limitType, this.config.getParsed().limit, true);
-            this.currentRun.start();
+            try {
+                this.currentRun = new BackuperRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().filter, this.config.getParsed().sortMode, this.config.getParsed().compressionLevel, this.config.getParsed().timezone, this.config.getParsed().limit, this.config.getParsed().limitType, true);
+                this.currentRun.start();
 
-            this.currentRun = null;
+                this.currentRun = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             throw new RuntimeException("A backup is already running");
         }
@@ -274,14 +330,14 @@ public class Backuper {
 
     public void stopBackup() {
         if (this.currentRun != null) {
-            this.currentRun.stop();
-            this.currentRun = null;
+            try {
+                this.currentRun.stop();
+                this.currentRun = null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         } else {
             throw new RuntimeException("No backup is currently running");
         }
-    }
-
-    public BackupRun getCurrentRun() {
-        return this.currentRun;
     }
 }
