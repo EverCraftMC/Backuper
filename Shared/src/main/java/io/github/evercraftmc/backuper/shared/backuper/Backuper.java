@@ -204,7 +204,7 @@ public class Backuper {
             List<File> files = new ArrayList<File>();
 
             for (File file : directory.listFiles()) {
-                if (deep && file.isDirectory() && isValid(file)) {
+                if (file.isDirectory() && deep) {
                     List<File> childFiles = this.getFiles(file, deep);
                     files.addAll(childFiles);
                 } else if (file.isFile()) {
@@ -219,35 +219,29 @@ public class Backuper {
             List<File> filteredFiles = new ArrayList<File>();
 
             for (File file : files) {
-                if (isValid(file)) {
-                    filteredFiles.add(file);
-                }
-            }
+                String path = file.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace(File.separator, "/");
 
-            return filteredFiles;
-        }
-
-        private boolean isValid(File file) {
-            String path = file.getAbsolutePath().replace(this.source.getAbsolutePath(), "").replace(File.separator, "/");
-
-            Boolean excluded = false;
-            for (String condition : this.filter) {
-                if ((condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase().substring(1), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().substring(1).replace(File.separator, "/")))) || file.equals(this.destination)) {
-                    excluded = true;
-
-                    break;
-                }
-            }
-
-            if (!excluded) {
+                Boolean excluded = false;
                 for (String condition : this.filter) {
-                    if (!condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase(), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().replace(File.separator, "/")))) {
-                        return true;
+                    if ((condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase().substring(1), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().substring(1).replace(File.separator, "/")))) || file.equals(this.destination)) {
+                        excluded = true;
+
+                        break;
+                    }
+                }
+
+                if (!excluded) {
+                    for (String condition : this.filter) {
+                        if (!condition.startsWith("!") && (new WildcardFileFilter(condition.toLowerCase(), IOCase.SENSITIVE).accept(file) || path.toLowerCase().startsWith(condition.toLowerCase().replace(File.separator, "/")))) {
+                            filteredFiles.add(file);
+
+                            break;
+                        }
                     }
                 }
             }
 
-            return false;
+            return filteredFiles;
         }
 
         private void backupFile(File file) throws IOException {
