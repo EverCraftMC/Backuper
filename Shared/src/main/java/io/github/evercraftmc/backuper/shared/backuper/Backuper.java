@@ -84,16 +84,6 @@ public class Backuper {
 
                 if (this.sortMode == SortMode.SIZE) {
                     this.files.sort((a, b) -> {
-                        if (a.length() < b.length()) {
-                            return 1;
-                        } else if (b.length() < a.length()) {
-                            return -1;
-                        } else {
-                            return 0;
-                        }
-                    });
-                } else if (this.sortMode == SortMode.SIZE_REVERSE) {
-                    this.files.sort((a, b) -> {
                         if (a.length() > b.length()) {
                             return 1;
                         } else if (b.length() > a.length()) {
@@ -102,11 +92,21 @@ public class Backuper {
                             return 0;
                         }
                     });
+                } else if (this.sortMode == SortMode.SIZE_REVERSE) {
+                    this.files.sort((a, b) -> {
+                        if (a.length() < b.length()) {
+                            return 1;
+                        } else if (b.length() < a.length()) {
+                            return -1;
+                        } else {
+                            return 0;
+                        }
+                    });
                 } else if (this.sortMode == SortMode.MODIFIED) {
                     this.files.sort((a, b) -> {
-                        if (a.lastModified() < b.lastModified()) {
+                        if (a.lastModified() > b.lastModified()) {
                             return 1;
-                        } else if (b.lastModified() < a.lastModified()) {
+                        } else if (b.lastModified() > a.lastModified()) {
                             return -1;
                         } else {
                             return 0;
@@ -114,9 +114,9 @@ public class Backuper {
                     });
                 } else if (this.sortMode == SortMode.MODIFIED_REVERSE) {
                     this.files.sort((a, b) -> {
-                        if (a.lastModified() > b.lastModified()) {
+                        if (a.lastModified() < b.lastModified()) {
                             return 1;
-                        } else if (b.lastModified() > a.lastModified()) {
+                        } else if (b.lastModified() < a.lastModified()) {
                             return -1;
                         } else {
                             return 0;
@@ -283,9 +283,9 @@ public class Backuper {
             List<File> files = this.getFiles(this.destination, false);
 
             files.sort((a, b) -> {
-                if (a.lastModified() > b.lastModified()) {
+                if (a.lastModified() < b.lastModified()) {
                     return 1;
-                } else if (b.lastModified() > a.lastModified()) {
+                } else if (b.lastModified() < a.lastModified()) {
                     return -1;
                 } else {
                     return 0;
