@@ -152,9 +152,9 @@ public class Backuper {
 
                 this.zip.close();
 
-                this.cullOld();
-
                 this.stopped = true;
+
+                this.cullOld();
             } else {
                 throw new RuntimeException("Backuper run is already stopped");
             }
