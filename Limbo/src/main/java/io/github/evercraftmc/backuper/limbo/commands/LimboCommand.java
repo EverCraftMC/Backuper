@@ -70,11 +70,13 @@ public abstract class LimboCommand implements CommandExecutor, TabCompletor, Plu
 
     public abstract void run(CommandSender sender, String[] args);
 
+    @Override
     public LimboCommand register() {
         LimboMain.getInstance().getServer().getPluginManager().registerCommands(LimboMain.getInstance(), this);
 
         return this;
     }
 
+    @Override
     public void unregister() {}
 }

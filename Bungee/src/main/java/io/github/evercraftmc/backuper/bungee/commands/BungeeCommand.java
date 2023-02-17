@@ -40,12 +40,14 @@ public abstract class BungeeCommand extends Command implements PluginCommand, Ta
 
     public abstract List<String> tabComplete(CommandSender sender, String[] args);
 
+    @Override
     public BungeeCommand register() {
         BungeeMain.getInstance().getProxy().getPluginManager().registerCommand(BungeeMain.getInstance(), this);
 
         return this;
     }
 
+    @Override
     public void unregister() {
         BungeeMain.getInstance().getProxy().getPluginManager().unregisterCommand(this);
     }

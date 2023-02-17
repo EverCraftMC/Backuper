@@ -55,12 +55,14 @@ public abstract class SpigotCommand extends Command implements PluginCommand {
 
     public abstract List<String> tabComplete(CommandSender sender, String[] args);
 
+    @Override
     public SpigotCommand register() {
         SpigotMain.getInstance().getServer().getCommandMap().register(SpigotMain.getInstance().getName(), this);
 
         return this;
     }
 
+    @Override
     public void unregister() {
         if (SpigotMain.getInstance().getCommand(this.getName()) != null) {
             SpigotMain.getInstance().getCommand(this.getName()).unregister(SpigotMain.getInstance().getServer().getCommandMap());

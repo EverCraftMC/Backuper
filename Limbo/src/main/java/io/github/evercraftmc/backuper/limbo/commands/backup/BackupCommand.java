@@ -24,6 +24,7 @@ public class BackupCommand extends LimboCommand {
                     sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(LimboMain.getInstance().getPluginMessages().get().backup.starting)));
 
                     LimboMain.getInstance().getServer().getScheduler().runTaskAsync(LimboMain.getInstance(), new LimboTask() {
+                        @Override
                         public void run() {
                             LimboMain.getInstance().getBackuper().startBackup();
 

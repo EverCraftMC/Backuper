@@ -64,12 +64,14 @@ public abstract class VelocityCommand implements PluginCommand, SimpleCommand {
 
     public abstract List<String> tabComplete(CommandSource sender, String[] args);
 
+    @Override
     public VelocityCommand register() {
         VelocityMain.getInstance().getProxy().getCommandManager().register(VelocityMain.getInstance().getProxy().getCommandManager().metaBuilder(this.getName()).aliases(this.getAliases().toArray(new String[] {})).plugin(VelocityMain.getInstance()).build(), this);
 
         return this;
     }
 
+    @Override
     public void unregister() {
         VelocityMain.getInstance().getProxy().getCommandManager().unregister(VelocityMain.getInstance().getProxy().getCommandManager().metaBuilder(this.getName()).plugin(VelocityMain.getInstance()).build());
     }
