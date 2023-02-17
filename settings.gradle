@@ -1,7 +1,8 @@
-rootProject.name = 'Backuper'
+rootProject.name = "Backuper"
 
-include 'Shared'
+include "Shared"
 
-include 'Bungee'
-include 'Spigot'
-include 'Limbo'
+include "Velocity"
+include "Bungee"
+include "Spigot"
+include "Limbo"

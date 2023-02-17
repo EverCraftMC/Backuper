@@ -19,14 +19,14 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.LimitType;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.SortMode;
-import io.github.evercraftmc.backuper.shared.config.FileConfig;
+import io.github.kale_ko.ejcl.file.JsonConfig;
 
 public class Backuper {
-    private FileConfig<BackuperConfig> config;
+    private JsonConfig<BackuperConfig> config;
 
     private BackuperRun currentRun = null;
 
-    public Backuper(FileConfig<BackuperConfig> config) {
+    public Backuper(JsonConfig<BackuperConfig> config) {
         this.config = config;
     }
 
@@ -310,7 +310,7 @@ public class Backuper {
     public void startBackup() {
         if (this.currentRun == null) {
             try {
-                this.currentRun = new BackuperRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.getParsed().destination), this.config.getParsed().filter, this.config.getParsed().sortMode, this.config.getParsed().compressionLevel, this.config.getParsed().timezone, this.config.getParsed().limit, this.config.getParsed().limitType, true);
+                this.currentRun = new BackuperRun(new File(System.getProperty("user.dir")), new File(System.getProperty("user.dir") + this.config.get().destination), this.config.get().filter, this.config.get().sortMode, this.config.get().compressionLevel, this.config.get().timezone, this.config.get().limit, this.config.get().limitType, true);
                 this.currentRun.start();
 
                 this.currentRun = null;

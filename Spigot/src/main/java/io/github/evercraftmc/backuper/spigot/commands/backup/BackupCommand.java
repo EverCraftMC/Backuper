@@ -20,37 +20,37 @@ public class BackupCommand extends SpigotCommand {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("start")) {
                 if (SpigotMain.getInstance().getBackuper().getCurrentRun() == null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.starting)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.starting)));
 
                     SpigotMain.getInstance().getServer().getScheduler().runTaskAsynchronously(SpigotMain.getInstance(), new Runnable() {
                         public void run() {
                             SpigotMain.getInstance().getBackuper().startBackup();
 
-                            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.finished)));
+                            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.finished)));
                         }
                     });
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.alreadyRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.alreadyRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("stop")) {
                 if (SpigotMain.getInstance().getBackuper().getCurrentRun() != null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.stopping)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.stopping)));
 
                     SpigotMain.getInstance().getBackuper().stopBackup();
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.notRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("status")) {
                 if (SpigotMain.getInstance().getBackuper().getCurrentRun() != null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", SpigotMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", SpigotMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.status.replace("{files}", SpigotMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", SpigotMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((SpigotMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().backup.notRunning)));
                 }
             } else {
-                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
+                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().error.invalidArgs)));
             }
         } else {
-            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
+            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(SpigotMain.getInstance().getPluginMessages().get().error.invalidArgs)));
         }
     }
 

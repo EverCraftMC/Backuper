@@ -3,7 +3,7 @@ package io.github.evercraftmc.backuper.shared;
 import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
-import io.github.evercraftmc.backuper.shared.config.FileConfig;
+import io.github.kale_ko.ejcl.file.JsonConfig;
 
 public interface Plugin {
     public void onEnable();
@@ -16,9 +16,7 @@ public interface Plugin {
         this.onEnable();
     }
 
-    public Logger getLogger();
+    public JsonConfig<BackuperConfig> getPluginConfig();
 
-    public FileConfig<BackuperConfig> getPluginConfig();
-
-    public FileConfig<BackuperMessages> getPluginMessages();
+    public JsonConfig<BackuperMessages> getPluginMessages();
 }

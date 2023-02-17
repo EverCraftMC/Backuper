@@ -20,37 +20,37 @@ public class BackupCommand extends BungeeCommand {
         if (args.length > 0) {
             if (args[0].equalsIgnoreCase("start")) {
                 if (BungeeMain.getInstance().getBackuper().getCurrentRun() == null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.starting)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.starting)));
 
                     BungeeMain.getInstance().getProxy().getScheduler().runAsync(BungeeMain.getInstance(), new Runnable() {
                         public void run() {
                             BungeeMain.getInstance().getBackuper().startBackup();
 
-                            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.finished)));
+                            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.finished)));
                         }
                     });
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.alreadyRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.alreadyRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("stop")) {
                 if (BungeeMain.getInstance().getBackuper().getCurrentRun() != null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.stopping)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.stopping)));
 
                     BungeeMain.getInstance().getBackuper().stopBackup();
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.notRunning)));
                 }
             } else if (args[0].equalsIgnoreCase("status")) {
                 if (BungeeMain.getInstance().getBackuper().getCurrentRun() != null) {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.status.replace("{files}", BungeeMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", BungeeMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.status.replace("{files}", BungeeMain.getInstance().getBackuper().getCurrentRun().getFinished() + "").replace("{totalFiles}", BungeeMain.getInstance().getBackuper().getCurrentRun().getTotal() + "").replace("{bytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getFinishedBytes() / 1024) / 1024) + "").replace("{totalBytes}", ((BungeeMain.getInstance().getBackuper().getCurrentRun().getTotalBytes() / 1024) / 1024) + ""))));
                 } else {
-                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().backup.notRunning)));
+                    sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().backup.notRunning)));
                 }
             } else {
-                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
+                sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().error.invalidArgs)));
             }
         } else {
-            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().getParsed().error.invalidArgs)));
+            sender.sendMessage(ComponentFormatter.stringToComponent(TextFormatter.translateColors(BungeeMain.getInstance().getPluginMessages().get().error.invalidArgs)));
         }
     }
 

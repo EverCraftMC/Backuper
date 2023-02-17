@@ -1,6 +1,6 @@
 package io.github.evercraftmc.backuper.spigot;
 
-import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -10,16 +10,16 @@ import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
-import io.github.evercraftmc.backuper.shared.config.FileConfig;
 import io.github.evercraftmc.backuper.spigot.commands.SpigotCommand;
 import io.github.evercraftmc.backuper.spigot.commands.backup.BackupCommand;
 import io.github.evercraftmc.backuper.spigot.commands.backup.ReloadCommand;
+import io.github.kale_ko.ejcl.file.JsonConfig;
 
 public class SpigotMain extends JavaPlugin implements Plugin {
     private static SpigotMain Instance;
 
-    private FileConfig<BackuperConfig> config;
-    private FileConfig<BackuperMessages> messages;
+    private JsonConfig<BackuperConfig> config;
+    private JsonConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
@@ -42,15 +42,23 @@ public class SpigotMain extends JavaPlugin implements Plugin {
 
         this.getLogger().info("Loading config..");
 
-        this.config = new FileConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().getAbsolutePath() + File.separator + "config.json");
-        this.config.reload();
+        this.config = new JsonConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().toPath().resolve("config.json").toFile());
+        try {
+            this.config.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.getLogger().info("Finished loading config");
 
         this.getLogger().info("Loading messages..");
 
-        this.messages = new FileConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().getAbsolutePath() + File.separator + "messages.json");
-        this.messages.reload();
+        this.messages = new JsonConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().toPath().resolve("messages.json").toFile());
+        try {
+            this.messages.load();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         this.getLogger().info("Finished loading messages");
 
@@ -110,11 +118,11 @@ public class SpigotMain extends JavaPlugin implements Plugin {
         return SpigotMain.Instance;
     }
 
-    public FileConfig<BackuperConfig> getPluginConfig() {
+    public JsonConfig<BackuperConfig> getPluginConfig() {
         return this.config;
     }
 
-    public FileConfig<BackuperMessages> getPluginMessages() {
+    public JsonConfig<BackuperMessages> getPluginMessages() {
         return this.messages;
     }
 

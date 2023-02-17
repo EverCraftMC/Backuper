@@ -1,40 +1,56 @@
-package io.github.evercraftmc.backuper.limbo;
+package io.github.evercraftmc.backuper.velocity;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
-import com.loohp.limbo.plugins.LimboPlugin;
-import io.github.evercraftmc.backuper.limbo.commands.LimboCommand;
-import io.github.evercraftmc.backuper.limbo.commands.backup.BackupCommand;
-import io.github.evercraftmc.backuper.limbo.commands.backup.ReloadCommand;
-import io.github.evercraftmc.backuper.shared.Plugin;
+import org.slf4j.Logger;
+import com.google.inject.Inject;
+import com.velocitypowered.api.event.Subscribe;
+import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
+import com.velocitypowered.api.plugin.Plugin;
+import com.velocitypowered.api.plugin.annotation.DataDirectory;
+import com.velocitypowered.api.proxy.ProxyServer;
 import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
+import io.github.evercraftmc.backuper.velocity.commands.VelocityCommand;
+import io.github.evercraftmc.backuper.velocity.commands.backup.BackupCommand;
+import io.github.evercraftmc.backuper.velocity.commands.backup.ReloadCommand;
 import io.github.kale_ko.ejcl.file.JsonConfig;
 
-public class LimboMain extends LimboPlugin implements Plugin {
-    private static LimboMain Instance;
-
-    private Logger logger;
+@Plugin(id = "backuper", name = "Backuper", version = "${plugin_version}", url = "https://github.com/EverCraft-MC/Backuper", description = "A custom plugin to backup all server data", authors = { "Kale Ko" })
+public class VelocityMain implements io.github.evercraftmc.backuper.shared.Plugin {
+    private static VelocityMain Instance;
 
     private JsonConfig<BackuperConfig> config;
     private JsonConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
-    private List<LimboCommand> commands;
+    private List<VelocityCommand> commands;
 
-    @Override
-    public void onLoad() {
-        LimboMain.Instance = this;
+    private ProxyServer server;
+    private File dataFolder;
+    private Logger logger;
+
+    @Inject
+    public VelocityMain(ProxyServer server, Logger logger, @DataDirectory Path dataFolder) {
+        VelocityMain.Instance = this;
 
         PluginManager.register(this);
 
-        this.logger = PluginManager.createLogger(this.getInfo().getName(), "[{timeC} {typeT}] [{name}] {message}");
+        this.server = server;
+        this.dataFolder = dataFolder.toFile();
+        this.logger = logger;
+    }
+
+    @Subscribe
+    public void onProxyInitialization(ProxyInitializeEvent event) {
+        onEnable();
     }
 
     @Override
@@ -69,16 +85,16 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         this.getLogger().info("Loading backuper..");
 
-        this.backuper = new Backuper(this.config);
+        this.backuper = new Backuper(config);
 
         this.getLogger().info("Finished loading backuper");
 
         this.getLogger().info("Loading commands..");
 
-        this.commands = new ArrayList<LimboCommand>();
+        this.commands = new ArrayList<VelocityCommand>();
 
-        this.commands.add(new BackupCommand("backuper", "Backup the server", Arrays.asList(), "backuper.commands.backup").register());
-        this.commands.add(new ReloadCommand("backuperreload", "Reload the plugin", Arrays.asList(), "backuper.commands.reload").register());
+        this.commands.add(new BackupCommand("velocitybackuper", "Backup the server", Arrays.asList("vbackuper"), "backup.commands.backup").register());
+        this.commands.add(new ReloadCommand("velocitybackuperreload", "Reload the plugin", Arrays.asList("vbackuperreload"), "backup.commands.reload").register());
 
         this.getLogger().info("Finished loading commands");
 
@@ -99,7 +115,7 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         this.getLogger().info("Unregistering commands..");
 
-        for (LimboCommand command : this.commands) {
+        for (VelocityCommand command : this.commands) {
             command.unregister();
         }
 
@@ -119,12 +135,8 @@ public class LimboMain extends LimboPlugin implements Plugin {
         this.getLogger().info("Finished reloading plugin");
     }
 
-    public static LimboMain getInstance() {
-        return LimboMain.Instance;
-    }
-
-    public Logger getLogger() {
-        return this.logger;
+    public static VelocityMain getInstance() {
+        return VelocityMain.Instance;
     }
 
     public JsonConfig<BackuperConfig> getPluginConfig() {
@@ -137,5 +149,17 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
     public Backuper getBackuper() {
         return this.backuper;
+    }
+
+    public ProxyServer getProxy() {
+        return this.server;
+    }
+
+    public File getDataFolder() {
+        return this.dataFolder;
+    }
+
+    public Logger getLogger() {
+        return this.logger;
     }
 }

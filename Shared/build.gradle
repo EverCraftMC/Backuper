@@ -6,9 +6,10 @@ archivesBaseName = "shared"
 version = project.project_version
 
 dependencies {
+    dependency "com.github.Kale-Ko:EJCL:${project.ejcl_version}"
+
     dependency "org.apache.commons:commons-lang3:${project.apache_lang_version}"
     dependency "org.apache.commons:commons-io:${project.apache_io_version}"
-    dependency "com.google.code.gson:gson:${project.gson_version}"
 }
 
 jar {
