@@ -1,6 +1,5 @@
 package io.github.evercraftmc.backuper.shared;
 
-import java.util.logging.Logger;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
 import io.github.kale_ko.ejcl.file.JsonConfig;
