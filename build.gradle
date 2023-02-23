@@ -1,13 +1,3 @@
-buildscript {
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath "com.hierynomus:sshj:0.34.0"
-    }
-}
-
 plugins {
     id "java"
 }
@@ -26,15 +16,6 @@ repositories {
 subprojects {
     group = "io.github.evercraftmc.backuper"
 
-    configurations {
-        dependency
-        dependency.canBeResolved = true
-
-        implementation {
-            extendsFrom dependency
-        }
-    }
-
     repositories {
         mavenCentral()
 	    maven { url "https://jitpack.io" }
@@ -45,44 +26,5 @@ subprojects {
         targetCompatibility = JavaVersion.toVersion(project.java_version)
 
         options.encoding = "UTF-8"
-    }
-}
-
-tasks.register("buildAll") {
-    dependsOn subprojects.collect { it.tasks.jar }
-}
-
-import net.schmizz.sshj.SSHClient
-import net.schmizz.sshj.sftp.SFTPClient
-
-tasks.register("upload") {
-    dependsOn tasks.buildAll
-
-    doLast {
-        def servers = System.getenv("EVERCRAFT_SERVERS").split(";")
-
-        servers.each() {
-            def server = it
-
-            if (findProject(":" + server.split(":")[1]) != null) {
-                SSHClient ssh = new SSHClient()
-                ssh.loadKnownHosts()
-                ssh.connect(System.getenv("EVERCRAFT_FTP_HOST").split(":")[0], Integer.parseInt(System.getenv("EVERCRAFT_FTP_HOST").split(":")[1]))
-                ssh.authPassword(System.getenv("EVERCRAFT_FTP_USERNAME") + "." + server.split(":")[0], System.getenv("EVERCRAFT_FTP_PASSWORD"))
-
-                SFTPClient ftp = ssh.newSFTPClient()
-
-                ftp.ls(server.split(":")[2]).each() {
-                    if (it.getName().startsWith("Backuper-") && it.getName().endsWith(".jar") && it.isRegularFile()) {
-                        ftp.rm(it.getPath())
-                    }
-                }
-
-                ftp.put(project(":" + server.split(":")[1]).tasks.jar.outputs.files[0].getPath(), server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.jar.outputs.files[0].getName())
-
-                ftp.close()
-                ssh.disconnect()
-            }
-        }
     }
 }

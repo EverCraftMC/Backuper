@@ -6,18 +6,18 @@ archivesBaseName = "shared"
 version = project.project_version
 
 dependencies {
-    dependency "com.github.Kale-Ko:EJCL:${project.ejcl_version}"
+    implementation "com.github.Kale-Ko:EJCL:${project.ejcl_version}"
 
-    dependency "org.apache.commons:commons-lang3:${project.apache_lang_version}"
-    dependency "org.apache.commons:commons-io:${project.apache_io_version}"
+    implementation "org.apache.commons:commons-lang3:${project.apache_lang_version}"
+    implementation "org.apache.commons:commons-io:${project.apache_io_version}"
 }
 
 jar {
     sourceCompatibility = JavaVersion.toVersion(project.java_version)
     targetCompatibility = JavaVersion.toVersion(project.java_version)
 
-    duplicatesStrategy = "exclude"
+    archiveVersion = rootProject.version + "-" + project.version
 
-    from files(project.sourceSets.main.output)
-    from files(project.configurations.dependency.collect { it.isDirectory() ? it : zipTree(it) })
+    duplicatesStrategy = "exclude"
+    from(configurations.runtimeClasspath.collect { it })
 }
