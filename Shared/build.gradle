@@ -19,5 +19,5 @@ jar {
     archiveVersion = rootProject.version + "-" + project.version
 
     duplicatesStrategy = "exclude"
-    from(configurations.runtimeClasspath.collect { it })
+    from(configurations.runtimeClasspath.collect { it.isDirectory() ? null : zipTree(it).matching { exclude "META-INF/**" } })
 }

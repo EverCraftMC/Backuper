@@ -28,3 +28,29 @@ subprojects {
         options.encoding = "UTF-8"
     }
 }
+
+import java.nio.file.Files
+import java.nio.file.Paths
+
+tasks.register("upload") {
+    dependsOn tasks.build
+
+    doLast {
+        def path = System.getenv("EVERCRAFT_PATH")
+        def servers = System.getenv("EVERCRAFT_SERVERS").split(";")
+
+        servers.each() {
+            def server = it
+
+            if ((System.getProperty("type") == null || System.getProperty("type").equalsIgnoreCase(server.split(":")[1])) && findProject(":" + server.split(":")[1]) != null) {
+                Files.list(Paths.get(path + server.split(":")[0] + server.split(":")[2])).each() {
+                    if (it.getFileName().startsWith("Backuper-") && it.getFileName().endsWith(".jar") && it.isFile()) {
+                        Files.delete(it.toPath())
+                    }
+                }
+
+                Files.copy(project(":" + server.split(":")[1]).tasks.jar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.jar.outputs.files[0].getName()))
+            }
+        }
+    }
+}
