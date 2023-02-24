@@ -2,7 +2,7 @@ rootProject.name = "Backuper"
 
 include "Shared"
 
-include "Velocity"
 include "Bungee"
+include "Velocity"
 include "Spigot"
 include "Limbo"
