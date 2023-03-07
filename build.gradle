@@ -53,7 +53,7 @@ tasks.register("upload") {
                     }
                 }
 
-                Files.copy(project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].getName()))
+                Files.copy(project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].getName().replace("-fat", "")))
             }
         }
     }
