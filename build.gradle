@@ -29,6 +29,10 @@ subprojects {
     }
 }
 
+build {
+    project(":Shared").getTasksByName("jar", false)
+}
+
 import java.nio.file.Files
 import java.nio.file.Paths
 
