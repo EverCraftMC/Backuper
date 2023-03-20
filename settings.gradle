@@ -3,6 +3,5 @@ rootProject.name = "Backuper"
 include "Shared"
 
 include "Bungee"
-include "Velocity"
 include "Spigot"
 include "Limbo"
