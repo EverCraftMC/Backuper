@@ -14,15 +14,15 @@ import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
-import io.github.kale_ko.ejcl.file.JsonConfig;
+import io.github.kale_ko.ejcl.file.bjsl.JsonFileConfig;
 
 public class LimboMain extends LimboPlugin implements Plugin {
     private static LimboMain Instance;
 
     private Logger logger;
 
-    private JsonConfig<BackuperConfig> config;
-    private JsonConfig<BackuperMessages> messages;
+    private JsonFileConfig<BackuperConfig> config;
+    private JsonFileConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
@@ -47,7 +47,7 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         this.getLogger().info("Loading config..");
 
-        this.config = new JsonConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().toPath().resolve("config.json").toFile());
+        this.config = new JsonFileConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().toPath().resolve("config.json").toFile());
         try {
             this.config.load();
         } catch (IOException e) {
@@ -58,7 +58,7 @@ public class LimboMain extends LimboPlugin implements Plugin {
 
         this.getLogger().info("Loading messages..");
 
-        this.messages = new JsonConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().toPath().resolve("messages.json").toFile());
+        this.messages = new JsonFileConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().toPath().resolve("messages.json").toFile());
         try {
             this.messages.load();
         } catch (IOException e) {
@@ -127,11 +127,11 @@ public class LimboMain extends LimboPlugin implements Plugin {
         return this.logger;
     }
 
-    public JsonConfig<BackuperConfig> getPluginConfig() {
+    public JsonFileConfig<BackuperConfig> getPluginConfig() {
         return this.config;
     }
 
-    public JsonConfig<BackuperMessages> getPluginMessages() {
+    public JsonFileConfig<BackuperMessages> getPluginMessages() {
         return this.messages;
     }
 

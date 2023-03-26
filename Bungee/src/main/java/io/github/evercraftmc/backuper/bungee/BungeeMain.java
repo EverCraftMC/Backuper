@@ -11,14 +11,14 @@ import io.github.evercraftmc.backuper.shared.PluginManager;
 import io.github.evercraftmc.backuper.shared.backuper.Backuper;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
-import io.github.kale_ko.ejcl.file.JsonConfig;
+import io.github.kale_ko.ejcl.file.bjsl.JsonFileConfig;
 import net.md_5.bungee.api.plugin.Plugin;
 
 public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper.shared.Plugin {
     private static BungeeMain Instance;
 
-    private JsonConfig<BackuperConfig> config;
-    private JsonConfig<BackuperMessages> messages;
+    private JsonFileConfig<BackuperConfig> config;
+    private JsonFileConfig<BackuperMessages> messages;
 
     private Backuper backuper;
 
@@ -41,7 +41,7 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
         this.getLogger().info("Loading config..");
 
-        this.config = new JsonConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().toPath().resolve("config.json").toFile());
+        this.config = new JsonFileConfig<BackuperConfig>(BackuperConfig.class, this.getDataFolder().toPath().resolve("config.json").toFile());
         try {
             this.config.load();
         } catch (IOException e) {
@@ -52,7 +52,7 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
 
         this.getLogger().info("Loading messages..");
 
-        this.messages = new JsonConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().toPath().resolve("messages.json").toFile());
+        this.messages = new JsonFileConfig<BackuperMessages>(BackuperMessages.class, this.getDataFolder().toPath().resolve("messages.json").toFile());
         try {
             this.messages.load();
         } catch (IOException e) {
@@ -117,11 +117,11 @@ public class BungeeMain extends Plugin implements io.github.evercraftmc.backuper
         return BungeeMain.Instance;
     }
 
-    public JsonConfig<BackuperConfig> getPluginConfig() {
+    public JsonFileConfig<BackuperConfig> getPluginConfig() {
         return this.config;
     }
 
-    public JsonConfig<BackuperMessages> getPluginMessages() {
+    public JsonFileConfig<BackuperMessages> getPluginMessages() {
         return this.messages;
     }
 

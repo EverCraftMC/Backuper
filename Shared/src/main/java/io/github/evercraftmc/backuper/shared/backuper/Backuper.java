@@ -19,14 +19,14 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.LimitType;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig.SortMode;
-import io.github.kale_ko.ejcl.file.JsonConfig;
+import io.github.kale_ko.ejcl.Config;
 
 public class Backuper {
-    private JsonConfig<BackuperConfig> config;
+    private Config<BackuperConfig> config;
 
     private BackuperRun currentRun = null;
 
-    public Backuper(JsonConfig<BackuperConfig> config) {
+    public Backuper(Config<BackuperConfig> config) {
         this.config = config;
     }
 
