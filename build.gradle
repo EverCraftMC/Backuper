@@ -47,13 +47,13 @@ tasks.register("upload") {
             def server = it
 
             if ((System.getProperty("type") == null || System.getProperty("type").equalsIgnoreCase(server.split(":")[1])) && findProject(":" + server.split(":")[1]) != null) {
-                file(Paths.get(path + server.split(":")[0] + server.split(":")[2])).listFiles().each() {
-                    if (it.getName().startsWith("Backuper-") && it.getName().endsWith(".jar")) {
-                        it.delete()
-                    }
+                exec {
+                    commandLine System.getenv("EVERCRAFT_RM_CMD").replace("{name}", "Backuper").replace("{dir}", server.split(":")[0] + server.split(":")[2]).split(", ")
                 }
 
-                Files.copy(project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].getName().replace("-fat", "")))
+                exec {
+                    commandLine "rsync", "-q", project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].getName().replace("-fat", ""))
+                }
             }
         }
     }
