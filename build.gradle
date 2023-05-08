@@ -18,7 +18,7 @@ subprojects {
 
     repositories {
         mavenCentral()
-	    maven { url "https://jitpack.io" }
+	maven { url "https://jitpack.io" }
     }
 
     tasks.withType(JavaCompile) {
@@ -48,7 +48,7 @@ tasks.register("upload") {
 
             if ((System.getProperty("type") == null || System.getProperty("type").equalsIgnoreCase(server.split(":")[1])) && findProject(":" + server.split(":")[1]) != null) {
                 exec {
-                    commandLine "rsync", "-q", project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper.jar")
+                    commandLine "rsync", "-q", project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + server.split(":")[1] + ".jar")
                 }
             }
         }
