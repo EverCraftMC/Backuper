@@ -48,11 +48,7 @@ tasks.register("upload") {
 
             if ((System.getProperty("type") == null || System.getProperty("type").equalsIgnoreCase(server.split(":")[1])) && findProject(":" + server.split(":")[1]) != null) {
                 exec {
-                    commandLine System.getenv("EVERCRAFT_RM_CMD").replace("{name}", "Backuper").replace("{dir}", server.split(":")[0] + server.split(":")[2]).split(", ")
-                }
-
-                exec {
-                    commandLine "rsync", "-q", project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper-" + project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].getName().replace("-fat", ""))
+                    commandLine "rsync", "-q", project(":" + server.split(":")[1]).tasks.fatJar.outputs.files[0].toPath(), Paths.get(path + server.split(":")[0] + server.split(":")[2] + "/Backuper.jar")
                 }
             }
         }
