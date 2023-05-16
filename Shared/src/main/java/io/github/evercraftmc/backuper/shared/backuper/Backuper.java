@@ -78,6 +78,13 @@ public class Backuper {
 
         public void start() throws IOException {
             if (!this.stopped) {
+                if (!this.source.exists()) {
+                    this.source.mkdirs();
+                }
+                if (!this.destination.exists()) {
+                    this.destination.mkdirs();
+                }
+
                 this.files = this.getFiles(this.source, true);
 
                 this.files = this.filterFiles(this.files);
