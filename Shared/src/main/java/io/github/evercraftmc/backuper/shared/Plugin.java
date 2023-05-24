@@ -2,7 +2,7 @@ package io.github.evercraftmc.backuper.shared;
 
 import io.github.evercraftmc.backuper.shared.backuper.BackuperConfig;
 import io.github.evercraftmc.backuper.shared.backuper.BackuperMessages;
-import io.github.kale_ko.ejcl.Config;
+import io.github.kale_ko.ejcl.StructuredConfig;
 
 public interface Plugin {
     public void onEnable();
@@ -15,7 +15,7 @@ public interface Plugin {
         this.onEnable();
     }
 
-    public Config<BackuperConfig> getPluginConfig();
+    public StructuredConfig<BackuperConfig> getPluginConfig();
 
-    public Config<BackuperMessages> getPluginMessages();
+    public StructuredConfig<BackuperMessages> getPluginMessages();
 }
